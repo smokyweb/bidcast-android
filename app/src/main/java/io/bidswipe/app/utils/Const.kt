@@ -121,4 +121,29 @@ object Const {
     val dimensionScales = listOf("Inch", "Feet", "Centimeter", "Meter")
     val weightScales= listOf("Pound" , "Ounce" , "Gram", "Kilogram" )
 
+    // Basecamp #9988324984 (2026-06-11): USPS package-size presets for the
+    // product create/edit dimension fields.  "Custom" leaves current values
+    // untouched; selecting any USPS entry fills length/width/height and sets
+    // the unit to Inch.  Kept here so iOS/PWA parity is easy to audit.
+    data class UspsPackagePreset(
+        val name: String,
+        val length: Double?,   // inches; null for Custom
+        val width: Double?,
+        val height: Double?,
+        val unit: String = "Inch",
+    )
+
+    val uspsPackagePresets = listOf(
+        UspsPackagePreset("Custom",                                       null,  null,  null),
+        UspsPackagePreset("USPS Flat Rate Envelope",                      12.5,   9.5,   0.5),
+        UspsPackagePreset("USPS Window Flat Rate Envelope",               12.5,   9.5,   0.5),
+        UspsPackagePreset("USPS Small Flat Rate Envelope",                10.0,   6.0,   0.5),
+        UspsPackagePreset("USPS Padded Flat Rate Envelope",               12.5,   9.5,   0.5),
+        UspsPackagePreset("USPS Legal Flat Rate Envelope",                15.0,   9.5,   0.5),
+        UspsPackagePreset("USPS Small Flat Rate Box",                      8.69,  5.44,  1.75),
+        UspsPackagePreset("USPS Medium Flat Rate Box 1 (Top Loading)",    11.25,  8.75,  6.0),
+        UspsPackagePreset("USPS Medium Flat Rate Box 2 (Side Loading)",   14.0,  12.0,   3.5),
+        UspsPackagePreset("USPS Large Flat Rate Box",                     12.25, 12.25,  6.0),
+    )
+
 }

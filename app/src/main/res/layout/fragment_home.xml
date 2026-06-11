@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Basecamp #9986390328 (round 2, 2026-06-11): whole-page scroll fix.
+     The header (search bar + icons) is pinned at the top.
+     Everything below it — category chips, Flash Sales, Live/Popular/Upcoming
+     tabs, and the shows grid — is wrapped in a NestedScrollView so the full
+     page scrolls as one unit.  The inner RecyclerView (shows grid) has
+     nestedScrollingEnabled=false so it expands to full height and defers
+     all scrolling to the outer NestedScrollView.  Pagination is driven from
+     HomeFragment via the NestedScrollView's setOnScrollChangeListener. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +15,7 @@
     android:focusableInTouchMode="true"
     tools:context=".ui.dashboard.HomeFragment">
 
+    <!-- Pinned header: search bar + save-bell + filter + notification icon -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -101,104 +110,12 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/categoryRecycler"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/margin"
-        android:paddingEnd="@dimen/margin"
-        android:clipToPadding="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="3"
-        android:orientation="horizontal"
-        tools:listitem="@layout/home_category_tile" />
-
-    <!-- Basecamp #9933973683 return (2026-05-29): Flash Sales section.
-         Shown above the Live/Popular tabs when active flash-sale products exist.
-         Hidden (gone) until getFlashSaleProducts() returns at least one item. -->
-    <LinearLayout
-        android:id="@+id/flashSalesSection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryRecycler">
-
-        <TextView
-            android:id="@+id/flashSalesHeader"
-            style="@style/TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin"
-            android:layout_marginTop="@dimen/half_margin"
-            android:text="&#x26A1; Flash Sales" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/flashSalesRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/margin"
-            android:paddingVertical="4dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="4"
-            tools:listitem="@layout/item_flash_sale_card" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin"
-        android:layout_marginBottom="@dimen/half_margin"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/flashSalesSection">
-
-        <TextView
-            android:id="@+id/live"
-            style="@style/TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin"
-            android:text="@string/live_now"
-            android:textColor="@color/scrim" />
-
-        <TextView
-            android:id="@+id/popular"
-            style="@style/TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin"
-            android:text="@string/popular"
-            android:textColor="@color/outlineVariant" />
-
-        <TextView
-            android:id="@+id/comingSoon"
-            style="@style/TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comming_soon"
-            android:textColor="@color/outlineVariant" />
-
-    </LinearLayout>
-
     <!-- Basecamp #9929090875 (Trey 2026-05-28, redesign round 4):
          Unified search results — INLINE, replacing the show carousels when a
-         search query is active. Top-constrained to just below categoryRecycler
-         so it renders in-place (not as an overlay). GridLayoutManager spanCount=2
-         allows Show cards to sit 2-per-row while Products/Users/Headers are full-width
-         via SpanSizeLookup set in HomeFragment. Visibility toggled by HomeFragment:
-         GONE when no query, VISIBLE when results arrive. -->
+         search query is active. Top-constrained to just below header.
+         GridLayoutManager spanCount=2 allows Show cards to sit 2-per-row while
+         Products/Users/Headers are full-width via SpanSizeLookup set in HomeFragment.
+         Visibility toggled by HomeFragment: GONE when no query, VISIBLE when results arrive. -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/unifiedResultsRecycler"
         android:layout_width="match_parent"
@@ -207,66 +124,174 @@
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
-        app:layout_constraintTop_toBottomOf="@id/categoryRecycler"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:itemCount="6"
         tools:listitem="@layout/home_item" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <!-- Scrollable body: everything below the pinned header scrolls together.
+         NestedScrollView drives pagination; the inner RecyclerView expands fully. -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/heading">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <!-- Category chip rail -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="4dp"
+                android:id="@+id/categoryRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/margin"
+                android:paddingEnd="@dimen/margin"
+                android:clipToPadding="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                android:orientation="horizontal"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/home_category_tile" />
+
+            <!-- Basecamp #9933973683 return (2026-05-29): Flash Sales section.
+                 Shown above the Live/Popular/Upcoming tabs when active flash-sale
+                 products exist.  Hidden (gone) until getFlashSaleProducts() returns
+                 at least one item. -->
+            <LinearLayout
+                android:id="@+id/flashSalesSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="6"
-                tools:listitem="@layout/home_item" />
+                android:visibility="gone">
 
-            <io.bidswipe.app.ui.custom.NoDataView
-                android:id="@+id/noData"
+                <TextView
+                    android:id="@+id/flashSalesHeader"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="&#x26A1; Flash Sales" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/flashSalesRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/margin"
+                    android:paddingVertical="4dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/item_flash_sale_card" />
+
+            </LinearLayout>
+
+            <!-- Live / Popular / Upcoming tab row -->
+            <LinearLayout
+                android:id="@+id/heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:title_text="@string/no_shows_found" />
+                android:layout_marginHorizontal="@dimen/margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <io.bidswipe.app.ui.custom.NoDataView
-                android:id="@+id/noInternet"
-                style="@style/noInternetStyle"
+                <TextView
+                    android:id="@+id/live"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:text="@string/live_now"
+                    android:textColor="@color/scrim" />
+
+                <TextView
+                    android:id="@+id/popular"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin"
+                    android:text="@string/popular"
+                    android:textColor="@color/outlineVariant" />
+
+                <TextView
+                    android:id="@+id/comingSoon"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comming_soon"
+                    android:textColor="@color/outlineVariant" />
+
+            </LinearLayout>
+
+            <!-- Shows grid: SwipeRefreshLayout wraps the RecyclerView.
+                 The RecyclerView uses nestedScrollingEnabled=false so it
+                 expands to full height and the NestedScrollView scrolls the page. -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:orientation="vertical"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="2"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:itemCount="6"
+                        tools:listitem="@layout/home_item" />
+
+                    <io.bidswipe.app.ui.custom.NoDataView
+                        android:id="@+id/noData"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:title_text="@string/no_shows_found" />
+
+                    <io.bidswipe.app.ui.custom.NoDataView
+                        android:id="@+id/noInternet"
+                        style="@style/noInternetStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <io.bidswipe.app.ui.custom.LoaderView
         android:id="@+id/loader"

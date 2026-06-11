@@ -697,6 +697,37 @@ class CreateProductFragment : BaseFragment<ScheduleShowViewModel, FragmentListAP
         viewModel.productProcessingCategory?.let {
             bind.proCategory.setText(it.replace("_", " "), false)
         }
+
+        // Basecamp #9988324984 (2026-06-11): USPS package-size preset dropdown.
+        setupPackageSizePreset()
+    }
+
+    // Basecamp #9988324984 (2026-06-11): USPS package-size preset dropdown.
+    // Selecting a USPS entry fills length/width/height and sets unit to Inch.
+    // Custom leaves the current field values untouched.
+    private fun setupPackageSizePreset() {
+        val presets = Const.uspsPackagePresets
+        val presetNames = presets.map { it.name }
+        val presetAdapter = ArrayAdapter(
+            mCtx,
+            android.R.layout.simple_list_item_1,
+            presetNames
+        )
+        val adapterBg = ContextCompat.getDrawable(mCtx, R.drawable.card_8)
+        bind.packageSizePreset.setText(presets[0].name, false)
+        bind.packageSizePreset.setAdapter(presetAdapter)
+        bind.packageSizePreset.setDropDownBackgroundDrawable(adapterBg)
+        bind.packageSizePreset.setHapticClickListener {
+            bind.packageSizePreset.showDropDown()
+        }
+        bind.packageSizePreset.setOnItemClickListener { _, _, position, _ ->
+            val preset = presets[position]
+            if (preset.length != null) {
+                bind.length.setText(preset.length.toString())
+                bind.width.setText(preset.width.toString())
+                bind.height.setText(preset.height.toString())
+            }
+        }
     }
 
     private fun setupMailClassDropdown() {

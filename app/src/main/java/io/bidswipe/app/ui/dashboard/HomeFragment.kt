@@ -308,20 +308,25 @@ class HomeFragment : BaseFragment<DashViewModel, FragmentHomeBinding>() {
             }
         }
 
-        bind.recycler.setOnScrollChangeListener { _, _, _, _, _ ->
-            val layoutManager = bind.recycler.layoutManager as GridLayoutManager
-            val lastItemPosition = layoutManager.findLastVisibleItemPosition()
-
-            if (resources.isTablet()) showList.lastIndex - 3 else showList.lastIndex - 2
-
-            if (lastItemPosition == showList.lastIndex && !isLoading) {
-                isLoading = true
-                page++
-                requestHomeLiveShows(
-                    search = bind.search.value().ifEmpty { null }?.request(),
-                )
+        // Basecamp #9986390328 (round 2, 2026-06-11): pagination moved from the
+        // RecyclerView scroll listener to the NestedScrollView scroll listener.
+        // The RecyclerView now has nestedScrollingEnabled=false and expands to its
+        // full height inside the NestedScrollView, so the RecyclerView itself never
+        // scrolls; all scrolling is handled by the outer NestedScrollView.
+        bind.nestedScrollView.setOnScrollChangeListener(
+            androidx.core.widget.NestedScrollView.OnScrollChangeListener { nsv, _, scrollY, _, _ ->
+                val contentHeight = nsv.getChildAt(0)?.measuredHeight ?: return@OnScrollChangeListener
+                val viewportHeight = nsv.measuredHeight
+                val threshold = if (resources.isTablet()) 600 else 400
+                if (scrollY >= contentHeight - viewportHeight - threshold && !isLoading) {
+                    isLoading = true
+                    page++
+                    requestHomeLiveShows(
+                        search = bind.search.value().ifEmpty { null }?.request(),
+                    )
+                }
             }
-        }
+        )
 
         bind.searchLayout.isEndIconVisible = false
 

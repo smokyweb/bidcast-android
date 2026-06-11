@@ -389,6 +389,34 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Basecamp #9988324984 (2026-06-11): USPS package-size preset
+                         dropdown.  Selecting a USPS option fills length/width/height
+                         and sets the unit to Inch.  Custom leaves fields unchanged. -->
+                    <TextView
+                        style="@style/TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Package Size Preset" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/inputBoxStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin"
+                        app:endIconDrawable="@drawable/ic_arrow_down_2"
+                        app:endIconMode="custom">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/packageSizePreset"
+                            style="@style/inputTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="Select Package Size (Optional)" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
                     <TextView
                         android:id="@+id/width_title"
                         style="@style/TitleSmall"
