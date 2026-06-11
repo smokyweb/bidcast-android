@@ -228,6 +228,12 @@ class AgoraPublisherActivity : BaseActivity() {
     private lateinit var clipSheetBind: CreateClipSheetBinding
     private lateinit var clipSheet: BottomSheetDialog
 
+    // Basecamp #9968303929 (GAP d): presence data from GET co-host/show/{showId}/presence.
+    // Refreshed after going live and after a cohost_join socket event.
+    // active_participants entry shape: { id (show_co_hosts row id), user_id, ... }
+    private var activeCoHostParticipantId: Int = 0   // show_co_hosts row id for POST leave
+    private var activeCoHostUserId: String = ""      // co_host user_id for socket emit
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bind.root)
@@ -1089,7 +1095,17 @@ class AgoraPublisherActivity : BaseActivity() {
                 socketManager?.endPoll(roomID, currentPoll?.pollId.toString())
             }
 
-            socketManager?.emitEndRoom(roomID)
+            // Basecamp #9968303929: only the PRIMARY host should broadcast endRoom.
+            // Co-host devices (isCoHost=true, which covers both the same-account
+            // second-device path and invited cohosts) must NOT end the show for
+            // everyone. isSameAccountSecondDevice is also checked for completeness,
+            // though it is always paired with isCoHost=true from CoHostJoinActivity.
+            // Invited cohosts already call leaveAsCoHost() from the cut button (which
+            // calls leaveInvitedCoHost / cohost_leave) before onDestroy is reached;
+            // a plain leave_room here is harmless but keeps the server in sync.
+            if (!isCoHost && !isSameAccountSecondDevice) {
+                socketManager?.emitEndRoom(roomID)
+            }
             socketManager?.leaveRoom(roomID, userId)
 //            socketManager?.disconnect()
         }
@@ -1183,6 +1199,10 @@ class AgoraPublisherActivity : BaseActivity() {
     fun addShowData(data: LiveShowModel) {
 
         isShowLive = true
+        // Basecamp #9968303929 (GAP d): prime the cohost presence cache once
+        // the show is live so the "Remove Cohost" menu entry has data if a cohost
+        // joined before the host opened the more-menu.
+        refreshCoHostPresence()
         socketManager?.createRoom(data)
 
         socketManager?.onRoomCreated { showData ->
@@ -2054,6 +2074,12 @@ class AgoraPublisherActivity : BaseActivity() {
                             } else {
                                 showInviteCohostDialog()
                             }
+                        }
+
+                        // Basecamp #9968303929 (GAP d): Remove Cohost (index 7).
+                        7 -> {
+                            moreSheet.dismiss()
+                            showRemoveCoHostDialog()
                         }
 
                         else -> {
@@ -3372,6 +3398,78 @@ class AgoraPublisherActivity : BaseActivity() {
         }
     }
 
+    // Basecamp #9968303929 (GAP d): fetch presence and cache the first active
+    // invited cohost participant so the host can remove them.
+    // JSON shape assumption: { data: { active_participants: [ { id: <show_co_hosts row id>, user_id: <string|int> }, ... ] } }
+    // The function is best-effort: errors are silently swallowed so they don't
+    // interrupt the host's live show flow.
+    private fun refreshCoHostPresence() {
+        if (showId.isBlank() || isCoHost) return
+        lifecycleScope.launch {
+            val result = cohostApiRequest(
+                "GET",
+                "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/show/$showId/presence"
+            )
+            if (result.first !in 200..299) return@launch
+            try {
+                val data = org.json.JSONObject(result.second).optJSONObject("data") ?: return@launch
+                val participants = data.optJSONArray("active_participants")
+                if (participants != null && participants.length() > 0) {
+                    val first = participants.optJSONObject(0)
+                    activeCoHostParticipantId = first?.optInt("id") ?: 0
+                    activeCoHostUserId = first?.optString("user_id")
+                        ?.takeIf { it.isNotBlank() }
+                        ?: first?.optInt("user_id")?.takeIf { it > 0 }?.toString()
+                        ?: ""
+                } else {
+                    activeCoHostParticipantId = 0
+                    activeCoHostUserId = ""
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    // Basecamp #9968303929 (GAP d): confirmation dialog for the host to remove
+    // an active invited cohost. Calls POST /api/product/co-host/{id}/leave and
+    // emits cohost_leave via the socket so the server strips the cohost's products.
+    private fun showRemoveCoHostDialog() {
+        if (!isShowLive) {
+            Toast.makeText(this, "Please start the live show first.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (activeCoHostParticipantId <= 0 || activeCoHostUserId.isBlank()) {
+            Toast.makeText(this, "No active cohost to remove.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val coHostIdSnapshot = activeCoHostParticipantId
+        val coHostUserIdSnapshot = activeCoHostUserId
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Remove Cohost?")
+            .setMessage("The cohost will be removed from your show and their unsold products will be cleared.")
+            .setPositiveButton("Remove") { d, _ ->
+                d.dismiss()
+                bind.loader.isVisible = true
+                lifecycleScope.launch {
+                    val result = cohostApiRequest(
+                        "POST",
+                        "${io.bidswipe.app.utils.Const.BASE_URL}/api/product/co-host/$coHostIdSnapshot/leave"
+                    )
+                    bind.loader.isVisible = false
+                    if (result.first in 200..299) {
+                        // Emit socket event so the server broadcasts product strip
+                        socketManager?.leaveInvitedCoHost(roomID, userId, coHostUserIdSnapshot)
+                        activeCoHostParticipantId = 0
+                        activeCoHostUserId = ""
+                        successToast("Cohost removed.")
+                    } else {
+                        Alerts.error(this@AgoraPublisherActivity, "Could not remove cohost. Please try again.")
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+            .show()
+    }
+
     private suspend fun cohostApiRequest(method: String, urlString: String, body: String? = null): Pair<Int, String> =
         withContext(kotlinx.coroutines.Dispatchers.IO) {
             try {
@@ -3544,6 +3642,9 @@ class AgoraPublisherActivity : BaseActivity() {
                                     statusTv.text = "✅ $name has joined as co-host!"
                                     statusTv.setTextColor(android.graphics.Color.parseColor("#16A34A"))
                                     pollJob?.cancel()
+                                    // Basecamp #9968303929 (GAP d): refresh presence so the
+                                    // "Remove Cohost" menu entry can find the active participant.
+                                    refreshCoHostPresence()
                                 }
                                 break
                             }

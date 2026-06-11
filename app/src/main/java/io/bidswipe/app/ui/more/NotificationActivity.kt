@@ -1,6 +1,7 @@
 package io.bidswipe.app.ui.more
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
@@ -18,8 +19,12 @@ import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetNotificationResponse
+import io.bidswipe.app.ui.cohost.CoHostJoinActivity
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.dashboard.DashActivity
+import io.bidswipe.app.ui.product.OrderStatusActivity
+import io.bidswipe.app.ui.sellerHub.SellerHubActivity
 import io.bidswipe.app.utils.NotificationCategory
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.bind
@@ -50,11 +55,72 @@ class NotificationActivity : BaseActivity() {
 	private val mClick = object : RecyclerClicks {
 		override fun itemClick(pos: Int, status: String?) {
 			when (status) {
-				// #36: "open" means the user tapped the notification row — the adapter
-				// already updated the visual state; nothing extra to do here yet.
-				// TODO: call viewModel.markNotificationSeen(id) once the backend endpoint
-				// api/notification/seen is available so the seen state persists server-side.
-				"open" -> { /* visual read state handled in adapter */ }
+				// Basecamp #9968303929: route notification taps to the appropriate
+				// screen based on the `type` field, mirroring buildPushIntent() in
+				// MyFirebaseMessagingService and DashActivity.checkPushExtras().
+				// Visual read state is already handled in NotificationAdapter.
+				"open" -> {
+					val item = notificationList.getOrNull(pos) ?: return
+					val type = item.type?.trim() ?: return
+					val refId = item.referenceId?.trim().orEmpty()
+					try {
+						when {
+							// Co-host invite: open CoHostJoinActivity so the invitee
+							// can accept/decline with their product selection.
+							type == "cohost_invite" && refId.isNotBlank() -> {
+								startActivity(
+									Intent(this@NotificationActivity, CoHostJoinActivity::class.java).apply {
+										putExtra("cohost_invite_id", refId)
+									}
+								)
+							}
+
+							// Buyer order / cancellation: open OrderStatusActivity.
+							type == "purchase"
+								|| type == "cancellation_approved"
+								|| type == "cancellation_rejected"
+								|| type == "Order Status Updated" -> {
+								// reference_id holds the order ID for these types.
+								if (refId.isNotBlank()) {
+									startActivity(
+										Intent(this@NotificationActivity, OrderStatusActivity::class.java).apply {
+											putExtra("orderId", refId)
+										}
+									)
+								}
+							}
+
+							// Seller order-related: open SellerHub → order tab.
+							type == "sold" || type == "cancellation_requested" -> {
+								startActivity(
+									Intent(this@NotificationActivity, SellerHubActivity::class.java).apply {
+										putExtra("slug", "order")
+										if (refId.isNotBlank()) putExtra("orderId", refId)
+										putExtra("from", "push")
+									}
+								)
+							}
+
+							// Wallet notifications: open SellerHub → wallet tab.
+							type == "credited" || type == "debited" -> {
+								startActivity(
+									Intent(this@NotificationActivity, SellerHubActivity::class.java).apply {
+										putExtra("slug", "wallet")
+										putExtra("from", "push")
+									}
+								)
+							}
+
+							// Bids / offers / messages / other types: fall through to
+							// DashActivity. These types either need data unavailable in
+							// the notification row or have no dedicated screen yet.
+							else -> { /* no navigation — stay in notification list */ }
+						}
+					} catch (_: Exception) {
+						// Crash-safe: if any Activity is missing from the manifest or
+						// an intent extra causes an error, silently swallow it.
+					}
+				}
 
 				"delete" -> {
 					AppBottomSheet(

@@ -103,17 +103,19 @@ object Const {
 
 
     val liveMoreMenu = mutableListOf(
-        LiveMoreOption("End Show", true, draw.ic_end),
+        LiveMoreOption("End Show", true, draw.ic_end),         // index 0
 //		LiveMoreOption("Clone item" , false , draw.ic_copy) ,
-        LiveMoreOption("Tip Setting", false, draw.ic_dollar),
+        LiveMoreOption("Tip Setting", false, draw.ic_dollar),  // index 1
 //		LiveMoreOption("Multicast" , false , draw.ic_multicast) ,
 //		LiveMoreOption("Add Coupons" , false , draw.ic_coupon) ,
-        LiveMoreOption("Raid", false, draw.ic_people),
-        LiveMoreOption("Create Poll", false, draw.ic_poll),
-        LiveMoreOption("Randomizer", false, draw.ic_spin_wheel),
+        LiveMoreOption("Raid", false, draw.ic_people),         // index 2
+        LiveMoreOption("Create Poll", false, draw.ic_poll),    // index 3
+        LiveMoreOption("Randomizer", false, draw.ic_spin_wheel), // index 4
         // Basecamp #9934001770 (2026-05-27): co-host pairing.
-        LiveMoreOption("Pair Device", false, draw.ic_people),
-        LiveMoreOption("Invite Cohost", false, draw.ic_people),
+        LiveMoreOption("Pair Device", false, draw.ic_people),  // index 5
+        LiveMoreOption("Invite Cohost", false, draw.ic_people), // index 6
+        // Basecamp #9968303929: host can remove an active invited cohost.
+        LiveMoreOption("Remove Cohost", false, draw.ic_people), // index 7
     )
 
     val dimensionScales = listOf("Inch", "Feet", "Centimeter", "Meter")

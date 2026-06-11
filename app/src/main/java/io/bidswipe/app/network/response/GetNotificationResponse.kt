@@ -34,6 +34,10 @@ data class GetNotificationResponse(
 		val message : String? ,
 		@SerializedName("receiver_id")
 		val receiverId : Int? ,
+		// Basecamp #9968303929: reference_id carries the domain entity ID for
+		// click-through routing (e.g. cohost_invite_id for cohost_invite rows).
+		@SerializedName("reference_id")
+		val referenceId : String? ,
 		@SerializedName("sender_id")
 		val senderId : Int? ,
 		@SerializedName("title")
