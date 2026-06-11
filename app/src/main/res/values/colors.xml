@@ -41,6 +41,9 @@
     <color name="onSuccess">#FFFFFF</color>
     <color name="successContainer">#DCFDEC</color>
 
+    <!-- Basecamp #9986418936: Let's Prepare flow — locked step circle bg matches iOS systemGray4 -->
+    <color name="prepare_step_locked">#D1D1D6</color>
+
     <color name="warning">#EDB730</color>
     <color name="onWarning">#FFFFFF</color>
     <color name="warningContainer">#FFF7E2</color>

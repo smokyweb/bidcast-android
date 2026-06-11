@@ -44,7 +44,8 @@ class ShowAdapter(
 					bind.setSchedule.text = mCtx.getString(R.string._continue)
 					bind.setSchedule.isEnabled = true
 					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_lock))
-					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+					// Basecamp #9986418936: match iOS systemGray4 (#D1D1D6) for locked/unlocked circle
+					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.prepare_step_locked))
 
                     bind.root.strokeWidth =mCtx.resources.dpToPx(0)
 				}
@@ -54,7 +55,8 @@ class ShowAdapter(
 					bind.step.isVisible = false
 					bind.setSchedule.visibility = View.GONE
 					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_tick))
-					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.success))
+					// Basecamp #9986418936: match iOS defaultTheme (#0058BD) for completed circle — iOS uses blue, not green
+					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
                     bind.root.strokeWidth =mCtx.resources.dpToPx(0)
 				}
 
@@ -72,7 +74,8 @@ class ShowAdapter(
 				bind.icon.isVisible = true
 				bind.step.isVisible = false
 				bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_lock))
-				bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.outlineVariant))
+				// Basecamp #9986418936: match iOS systemGray4 (#D1D1D6) for locked circle bg
+				bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.prepare_step_locked))
 				bind.setSchedule.visibility = View.GONE
 				bind.setSchedule.isEnabled = false
 			}
