@@ -38,11 +38,27 @@ class RandomizerTemplateAdapter(
         holder.name.text = item.name ?: "Untitled"
         holder.typeChip.text = item.typeLabel()
         holder.slotCount.text = "${item.slotCount ?: 0} slots"
-        holder.btnEdit.setOnClickListener { onEdit(item) }
-        holder.btnDelete.setOnClickListener { onDelete(item) }
-        holder.btnRelease.setOnClickListener { onRelease(item) }
+        // Basecamp #9960173707 (2026-06-11): always resolve the item at
+        // click-time via bindingAdapterPosition so that a RecyclerView rebind
+        // triggered between bind and click can never deliver a stale item —
+        // the classic "first Edit tap opens Create screen" symptom.
+        holder.btnEdit.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) onEdit(items[pos])
+        }
+        holder.btnDelete.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) onDelete(items[pos])
+        }
+        holder.btnRelease.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) onRelease(items[pos])
+        }
         holder.itemView.isClickable = onSelect != null
-        holder.itemView.setOnClickListener { onSelect?.invoke(item) }
+        holder.itemView.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) onSelect?.invoke(items[pos])
+        }
         holder.btnDelete.visibility = if (onSelect == null) View.VISIBLE else View.GONE
         holder.btnRelease.visibility = if (onSelect == null) View.VISIBLE else View.GONE
     }
