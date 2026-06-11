@@ -115,6 +115,12 @@ class ProductsForLiveShowFragment : BottomSheetDialogFragment() {
                     surprisePage = 1
                     loadSurpriseSets()
                 } else {
+                    page = 1
+                    productTotalPage = 1
+                    isLoading = false
+                    productList.clear()
+                    showProducts.clear()
+                    productAdapter.notifyDataSetChanged()
                     loadData()
                 }
             }

@@ -137,6 +137,7 @@ class RandomizerTemplatesActivity : BaseActivity() {
         setupObservers()
 
         bind.fabAddTemplate.setHapticClickListener { openBuilder(null) }
+        bind.btnCreateTemplate.setHapticClickListener { openBuilder(null) }
 
         vm.loadTemplates()
         if (intent.getBooleanExtra("start_new_template", false)) {
@@ -291,8 +292,8 @@ class RandomizerTemplatesActivity : BaseActivity() {
         vm.buyerRaffleProductTitle = null
         val initTypeVal = template?.type ?: "product_raffle"
         if (initTypeVal == "buyer_raffle") {
-            vm.buyerRaffleProductId    = existing.firstOrNull()?.productId
-            vm.buyerRaffleProductTitle = existing.firstOrNull()?.productTitle
+            vm.buyerRaffleProductId    = template?.prizeProductId ?: existing.firstOrNull()?.productId
+            vm.buyerRaffleProductTitle = template?.prizeProduct?.title ?: existing.firstOrNull()?.productTitle
         }
 
         val sheet = BottomSheetDialog(this)
@@ -306,6 +307,15 @@ class RandomizerTemplatesActivity : BaseActivity() {
         bb.etTemplateName.setText(template?.name ?: "")
         bb.etEntryCost.setText(template?.entryCost ?: "0")
         bb.tvSlotCountValue.text = slotCount.toString()
+        val initialCost = template?.entryCost?.toDoubleOrNull() ?: 0.0
+        fun syncPaidEntryUi(isPaid: Boolean) {
+            bb.tvEntryModeSubtitle.text = if (isPaid) "Paid" else "Free"
+            bb.layoutEntryCost.visibility = if (isPaid) View.VISIBLE else View.GONE
+            if (!isPaid) bb.etEntryCost.setText("0")
+        }
+        bb.switchPaidEntry.isChecked = initialCost > 0
+        syncPaidEntryUi(initialCost > 0)
+        bb.switchPaidEntry.setOnCheckedChangeListener { _, isChecked -> syncPaidEntryUi(isChecked) }
 
         // Type dropdown
         val typeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, RandomizerViewModel.TYPE_LABELS)
@@ -366,11 +376,21 @@ class RandomizerTemplatesActivity : BaseActivity() {
             val typeLabel = bb.actvTemplateType.text.toString()
             val typeIdx   = RandomizerViewModel.TYPE_LABELS.indexOf(typeLabel)
             val typeVal   = if (typeIdx >= 0) RandomizerViewModel.TYPE_VALUES[typeIdx] else "product_raffle"
-            val cost      = bb.etEntryCost.value().toDoubleOrNull()
+            val isPaid = bb.switchPaidEntry.isChecked
+            val cost = if (isPaid) bb.etEntryCost.value().toDoubleOrNull() else 0.0
+            if (isPaid && (cost == null || cost <= 0.0)) {
+                Alerts.error(this, "Entry cost is required for paid randomizers")
+                return@setOnClickListener
+            }
+            if (typeVal == "buyer_raffle" && vm.buyerRaffleProductId == null) {
+                Alerts.error(this, "Select a prize product for buyer raffle")
+                return@setOnClickListener
+            }
             val req = RandomizerTemplateRequest(
                 name       = name,
                 type       = typeVal,
                 entryCost  = cost,
+                prizeProductId = if (typeVal == "buyer_raffle") vm.buyerRaffleProductId else null,
                 slotCount  = count,
                 slots      = vm.toSlotRequests()
             )

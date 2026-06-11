@@ -6,6 +6,7 @@ data class RandomizerTemplateRequest(
     @SerializedName("name") val name: String,
     @SerializedName("type") val type: String,
     @SerializedName("entry_cost") val entryCost: Double? = null,
+    @SerializedName("prize_product_id") val prizeProductId: Int? = null,
     @SerializedName("slot_count") val slotCount: Int,
     @SerializedName("slots") val slots: List<RandomizerSlotRequest>
 )

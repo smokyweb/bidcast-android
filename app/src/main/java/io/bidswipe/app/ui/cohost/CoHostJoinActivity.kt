@@ -107,7 +107,9 @@ class CoHostJoinActivity : AppCompatActivity() {
                         // build the Agora channel name matching the host's channel.
                         val hostUserId = show?.optString("user_id")
                             ?: show?.optInt("user_id")?.takeIf { it != 0 }?.toString() ?: ""
-                        val pairingId = data?.optInt("id") ?: 0
+                        val pairingId = data?.optJSONObject("pairing")?.optInt("id")
+                            ?: data?.optInt("id")
+                            ?: 0
                         val intent = Intent(this@CoHostJoinActivity, AgoraPublisherActivity::class.java)
                         intent.putExtra("show_id", showId.toString())
                         intent.putExtra("co_host", true)

@@ -12,8 +12,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.bidswipe.app.base.BaseFragment
-import io.bidswipe.app.controller.OrdersAdapter
 import io.bidswipe.app.controller.ShopAdapter
+import io.bidswipe.app.controller.SoldProductsAdapter
 import io.bidswipe.app.controller.SortingOptionAdapter
 import io.bidswipe.app.databinding.FragmentShopBinding
 import io.bidswipe.app.databinding.SortingOptionSheetBinding
@@ -43,7 +43,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 	private var productList = mutableListOf<Product?>()
 	private var soldOrderList = mutableListOf<GetOrdersResponse.Data?>()
 	private lateinit var shopAdapter: ShopAdapter
-	private lateinit var soldOrdersAdapter: OrdersAdapter
+	private lateinit var soldProductsAdapter: SoldProductsAdapter
 	private val optionList = mutableListOf<LiveMoreOption?>()
 	private var sellerId = ""
 	private var sortBy = "title_asc"
@@ -161,7 +161,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 		}
 
 		shopAdapter = ShopAdapter(productList, mClick)
-		soldOrdersAdapter = OrdersAdapter(soldOrderList, soldOrderClick)
+		soldProductsAdapter = SoldProductsAdapter(soldOrderList, soldOrderClick)
 		bind.recycler.adapter = shopAdapter
 		loadData()
 		viewModel.getUserProductsRepo.observe(viewLifecycleOwner) {
@@ -249,7 +249,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 					}
 
 					isLoading = page >= (it.value.totalPage ?: 0)
-					soldOrdersAdapter.notifyDataSetChanged()
+					soldProductsAdapter.notifyDataSetChanged()
 				}
 
 				is Resource.Error -> {
@@ -292,7 +292,7 @@ class ShopFragment : BaseFragment<SellerViewModel, FragmentShopBinding>() {
 
 	private fun loadData() {
 		updateNoDataTitle()
-		bind.recycler.adapter = if (selectedShopTab == ShopTab.SOLD) soldOrdersAdapter else shopAdapter
+		bind.recycler.adapter = if (selectedShopTab == ShopTab.SOLD) soldProductsAdapter else shopAdapter
 
 		if (selectedShopTab == ShopTab.SOLD) {
 			viewModel.getSellerSoldOrders(
