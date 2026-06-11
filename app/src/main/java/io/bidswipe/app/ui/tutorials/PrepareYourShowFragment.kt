@@ -2,6 +2,7 @@ package io.bidswipe.app.ui.tutorials
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
+import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.ids
@@ -145,13 +147,22 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 						}
 
 						4 -> {
-
-							bind.loader.isVisible = true
-
-							findNavController().navigate(
-								ids.goToShowTipsFragment,
-								bundleOf("type" to "goLive", "showId" to viewModel.showId)
-							)
+							// Basecamp #9986425399: Continue on the final "Go Live" step must
+							// NOT start the show.  Navigate to ShowDetailsActivity where the
+							// seller can review the scheduled show and tap "Start Show"
+							// explicitly — matching the iOS Let's Prepare flow that returns
+							// the user to the show overview rather than launching the
+							// publisher/live activity.
+							val sid = viewModel.showId
+							if (sid.isNotEmpty()) {
+								startActivity(
+									Intent(mCtx, ShowDetailsActivity::class.java)
+										.putExtra("showId", sid)
+								)
+								activity?.finish()
+							} else {
+								findNavController().popBackStack()
+							}
 						}
 
 					}

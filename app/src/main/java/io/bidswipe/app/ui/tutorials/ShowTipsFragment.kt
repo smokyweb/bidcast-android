@@ -9,16 +9,11 @@ import androidx.viewpager2.widget.ViewPager2
 import io.bidswipe.app.base.BaseFragment
 import io.bidswipe.app.controller.ProductTipsPagerAdapter
 import io.bidswipe.app.databinding.FragmentShowTipsBinding
-import io.bidswipe.app.model.LiveShowModel
-import io.bidswipe.app.network.response.toLiveShowProduct
 import io.bidswipe.app.ui.dashboard.DashViewModel
-import io.bidswipe.app.utils.Utils
-import io.bidswipe.app.utils.finish
 import io.bidswipe.app.utils.ids
 import io.bidswipe.app.utils.setHapticClickListener
 import io.bidswipe.app.utils.string
 import io.bidswipe.app.utils.toScheduleShow
-import io.bidswipe.app.utils.toSellerShow
 
 class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() {
 
@@ -93,42 +88,13 @@ class ShowTipsFragment : BaseFragment<DashViewModel, FragmentShowTipsBinding>() 
 						findNavController().navigate(ids.goToLiveRehearsalFragment)
 					}
 
+					// Basecamp #9986425399: "goLive" is no longer navigated from
+					// PrepareYourShowFragment — step 4 now goes to ShowDetailsActivity
+					// so the seller can start the show explicitly from the overview.
+					// Guard this branch: if somehow reached, just pop back rather than
+					// launching AgoraPublisherActivity unexpectedly.
 					"goLive" -> {
-						val data = viewModel.currentShowData
-						log("SHOW DATA Before Start Shoe: $data")
-
-						val products = viewModel.currentShowData?.products?.map { product -> product?.toLiveShowProduct() }
-						products?.first()?.isCurrent = true
-
-						val show = LiveShowModel(
-							seller = LiveShowModel.Seller(
-								id = userId,
-								image = userImage,
-								name = userName,
-								rating = ""
-							),
-							products = products ?: mutableListOf(),
-							roomId = "live_room_${userId}_${data?.id.toString()}",
-							showDetail = "Test Details",
-							thumbnail = data?.thumbnail?.getOrNull(0) ?: "",
-							viewerCount = "1",
-							highestBid = LiveShowModel.HighestBid(
-								bidAmount = "",
-								userName = "",
-								userImage = "",
-								userId = "",
-								productId = ""
-							),
-							isLive = true,
-							time = Utils.timestamp().toString(),
-							showId = data?.id.toString(),
-							allowBidForAll = true,
-							bidCountDown = "",
-							showTimer = "",
-						)
-
-						startActivity(mCtx.toSellerShow(data?.time, show))
-						finish()
+						findNavController().popBackStack()
 					}
 
 					else -> {
