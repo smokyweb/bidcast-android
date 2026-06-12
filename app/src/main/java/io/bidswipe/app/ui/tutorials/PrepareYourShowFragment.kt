@@ -70,6 +70,27 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			}
 		}
 
+	// Basecamp #9986427172: in show-context mode the user returning from LiveRehearsalActivity
+	// via back (or any means) should mark step 3 complete — we don't gate on RESULT_OK because
+	// LiveRehearsalActivity only sets RESULT_OK when the explicit "End" button is tapped, which
+	// means pressing the system back button silently discards progress in training mode but must
+	// advance the step when a show context is already present.
+	private var rehearsalContextLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+			viewModel.currentStep = 3
+			viewModel.showList.getOrNull(2)?.status = "completed"
+			viewModel.showList.getOrNull(3)?.status = "locked"
+			bind.recycler.adapter?.notifyDataSetChanged()
+		}
+
+	// Basecamp #9986427172: launcher for ShowDetailsActivity in promote mode (step 4, show-context).
+	// On return — regardless of result — mark step 4 complete and advance to step 5.
+	private var promoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+			viewModel.currentStep = 4
+			viewModel.showList.getOrNull(3)?.status = "completed"
+			viewModel.showList.getOrNull(4)?.status = "locked"
+			bind.recycler.adapter?.notifyDataSetChanged()
+		}
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -94,8 +115,15 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 						Alerts.error(mCtx, "Please complete previous step first")
 						return
 					}
+					val hasShowContext = viewModel.showId.isNotBlank()
+
 					when (pos) {
 						0 -> {
+							// Step 1 "Schedule": in show-context mode the show already has a
+							// date/time (prefilled as complete). Guard added just in case the
+							// seller taps it anyway — open ScheduleShow normally; in
+							// show-context the step is already complete so this branch is
+							// typically unreachable.
 							scheduleShowLauncher.launch(mCtx.toScheduleShow(from = "tutorial"))
 						}
 
@@ -104,55 +132,78 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 						}
 
 						2 -> {
-							rehearsalLauncher.launch(mCtx.toLiveRehearsal())
+							// Step 3 "Rehearse going live":
+							// - Training mode (no showId): standard launcher — advances only on RESULT_OK.
+							// - Show-context mode: use rehearsalContextLauncher so ANY return
+							//   (including system back) marks the step complete and advances.
+							// Basecamp #9986427172.
+							if (hasShowContext) {
+								rehearsalContextLauncher.launch(mCtx.toLiveRehearsal())
+							} else {
+								rehearsalLauncher.launch(mCtx.toLiveRehearsal())
+							}
 						}
 
 						3 -> {
-
-							val mData = viewModel.showData.value
-
-							imagePartList.add(
-								Utils.imagePart(
-									"thumbnail[]",
-									mData?.thumbnail.toString(),
-									File(mData?.thumbnail?:"")
+							// Step 4 "Bring in buyers":
+							// - Show-context mode: the show already exists — do NOT call
+							//   storeScheduleShow (that's the QA error). Instead open
+							//   ShowDetailsActivity with autoPromote=true so the promote sheet
+							//   opens automatically. On return, promoteLauncher marks step 4
+							//   complete and advances to step 5. Basecamp #9986427172.
+							// - Training mode: existing storeScheduleShow path unchanged.
+							if (hasShowContext) {
+								promoteLauncher.launch(
+									Intent(mCtx, ShowDetailsActivity::class.java)
+										.putExtra("showId", viewModel.showId)
+										.putExtra("autoPromote", true)
 								)
-							)
+							} else {
+								val mData = viewModel.showData.value
 
-							if (mData?.productIds?.isEmpty() == true) {
-								Alerts.error(mCtx, "Please select products")
-								return
+								imagePartList.add(
+									Utils.imagePart(
+										"thumbnail[]",
+										mData?.thumbnail.toString(),
+										File(mData?.thumbnail?:"")
+									)
+								)
+
+								if (mData?.productIds?.isEmpty() == true) {
+									Alerts.error(mCtx, "Please select products")
+									return
+								}
+
+								val productIds = mData?.productIds?.split(",") ?: mutableListOf()
+
+								bind.loader.isVisible = true
+
+								viewModel.storeScheduleShow(
+									mData?.showTitle?.request(),
+									viewModel.showDate.request(),
+									viewModel.showTime.request(),
+									mData?.categoryId?.request(),
+									mData?.subCategoryId?.request(),
+									viewModel.discoverability.request(),
+									mData?.actionId?.request(),
+									imagePartList,
+									productIds.map { it.toInt() },
+									mData?.repeatMode?.request(),
+									mData?.repeatType?.request(),
+									mData?.primaryLanguage?.request(),
+									mData?.explicitContent?.request()
+								)
 							}
-
-							val productIds = mData?.productIds?.split(",") ?: mutableListOf()
-
-							bind.loader.isVisible = true
-
-							viewModel.storeScheduleShow(
-								mData?.showTitle?.request(),
-								viewModel.showDate.request(),
-								viewModel.showTime.request(),
-								mData?.categoryId?.request(),
-								mData?.subCategoryId?.request(),
-								viewModel.discoverability.request(),
-								mData?.actionId?.request(),
-								imagePartList,
-								productIds.map { it.toInt() },
-								mData?.repeatMode?.request(),
-								mData?.repeatType?.request(),
-								mData?.primaryLanguage?.request(),
-								mData?.explicitContent?.request()
-
-							)
 						}
 
 						4 -> {
-							// Basecamp #9986425399: Continue on the final "Go Live" step must
-							// NOT start the show.  Navigate to ShowDetailsActivity where the
-							// seller can review the scheduled show and tap "Start Show"
-							// explicitly — matching the iOS Let's Prepare flow that returns
-							// the user to the show overview rather than launching the
-							// publisher/live activity.
+							// Step 5 "Preview show and go live":
+							// - Show-context mode: open ShowDetailsActivity(showId). "Start Show"
+							//   lives there. Flow ends — finish the TutorialsActivity so back
+							//   returns the user to ShowDetailsActivity directly.
+							//   Basecamp #9986427172.
+							// - Training mode: existing behaviour (navigate to ShowDetailsActivity
+							//   with the newly-created showId, or pop if none).
 							val sid = viewModel.showId
 							if (sid.isNotEmpty()) {
 								startActivity(

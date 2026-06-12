@@ -119,7 +119,10 @@ class ShowDetailsActivity : BaseActivity() {
             }
         }
 
-        // #49 — Promote button: fetch plans then show the promote bottom sheet
+        // #49 — Promote button: fetch plans then show the promote bottom sheet.
+        // Basecamp #9986427172: if launched with autoPromote=true (from PrepareYourShowFragment
+        // step 4 in show-context mode) open the promote sheet automatically once plans load.
+        val autoPromote = intent.getBooleanExtra("autoPromote", false)
         viewModel.getPromoteShowList()
         viewModel.getPromoteShowListRepo.observe(this) {
             when (it) {
@@ -127,9 +130,15 @@ class ShowDetailsActivity : BaseActivity() {
                     viewModel.getPromoteShowListRepo.value = null
                     promotePlans.clear()
                     promotePlans.addAll(it.value.data ?: mutableListOf())
+                    if (autoPromote && promotePlans.isNotEmpty()) {
+                        showPromoteSheet()
+                    }
                 }
                 is Resource.Error -> {
                     viewModel.getPromoteShowListRepo.value = null
+                    if (autoPromote) {
+                        errorToast("Promote plans unavailable. You can promote from this screen.")
+                    }
                 }
                 else -> {}
             }
