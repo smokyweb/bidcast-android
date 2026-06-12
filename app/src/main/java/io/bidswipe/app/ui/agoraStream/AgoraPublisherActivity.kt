@@ -2602,11 +2602,14 @@ class AgoraPublisherActivity : BaseActivity() {
                 log("Selected seller: ${selectedItem?.name}")
                 val targetRoomId = selectedItem?.roomId.orEmpty()
                 val targetHostId = selectedItem?.id.toString()
+                // Signature is (sourceRoomId, targetRoomId, sourceHostId, targetHostId):
+                // the raiding host is the SOURCE. The previous call had the two host
+                // ids swapped, which corrupted raid_logs attribution server-side.
                 socketManager?.createRaid(
                     roomID,
                     targetRoomId,
-                    targetHostId,
-                    userId
+                    userId,
+                    targetHostId
                 )
                 liveSellerSheet.dismiss()
                 // Basecamp #9986387480 (round 2): after a successful raid the
