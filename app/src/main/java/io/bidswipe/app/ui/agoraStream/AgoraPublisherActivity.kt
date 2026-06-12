@@ -2612,23 +2612,54 @@ class AgoraPublisherActivity : BaseActivity() {
                     targetHostId
                 )
                 liveSellerSheet.dismiss()
-                // Basecamp #9986387480 (round 2): after a successful raid the
-                // seller should join the TARGET show as a viewer, not go home.
-                // Set isRaidingOut=true BEFORE destroyEngine so onDestroy skips
-                // emitEndRoom (the server already closes the source room on raid).
+                // Basecamp #9986387480 (round 3): fetch target show details BEFORE
+                // launching ViewLiveShowActivity so the StreamModel carries a real
+                // rtcToken.  Passing streamId="" caused guaranteed black screen
+                // because ViewLiveShowActivity skips joinSubscriberChannel when the
+                // token is blank and the REST fallback only fires after 3.5 s.
+                // Fix: parse showId from roomId (live_room_{sellerId}_{showId}),
+                // call get-show-details-by-id, build StreamModel with the real
+                // rtcToken — identical to how the home-screen card tap does it.
                 isRaidingOut = true
                 App.manager.destroyEngine()
-                // Build a single-item stream list for the target show.
-                val targetStream = StreamModel(
-                    roomId = targetRoomId,
-                    streamId = "" // no token needed; viewer will use socket data
-                )
-                startActivity(
-                    Intent(this@AgoraPublisherActivity, ViewLiveShowActivity::class.java)
-                        .putExtra("roomId", targetRoomId)
-                        .putParcelableArrayListExtra("streamList", arrayListOf(targetStream))
-                )
-                finishAfterTransition()
+                val targetShowId = targetRoomId.split("_").lastOrNull()?.takeIf { it.isNotBlank() }
+                lifecycleScope.launch {
+                    val rtcTokenForTarget = if (targetShowId != null) {
+                        withContext(Dispatchers.IO) {
+                            try {
+                                val token = io.bidswipe.app.utils.Prefs(this@AgoraPublisherActivity).token()
+                                val url = java.net.URL("${Const.BASE_URL}/api/get-show-details-by-id?show_id=$targetShowId")
+                                val conn = url.openConnection() as java.net.HttpURLConnection
+                                conn.requestMethod = "GET"
+                                conn.connectTimeout = 6_000
+                                conn.readTimeout = 6_000
+                                conn.setRequestProperty("Accept", "application/json")
+                                conn.setRequestProperty("Authorization", "Bearer $token")
+                                val rc = conn.responseCode
+                                val body = (if (rc in 200..299) conn.inputStream else conn.errorStream)
+                                    .bufferedReader().use { it.readText() }
+                                conn.disconnect()
+                                if (rc in 200..299) {
+                                    org.json.JSONObject(body).optJSONObject("data")?.optString("rtc_token")
+                                        ?.takeIf { it.isNotBlank() }
+                                } else null
+                            } catch (_: Exception) { null }
+                        }
+                    } else null
+                    val targetStream = StreamModel(
+                        roomId = targetRoomId,
+                        // Use the real rtc_token from show details (same field the home-screen
+                        // StreamModel uses: it1?.rtcToken). Fall back to "" — WatchStreamFragment's
+                        // 3.5 s REST fallback will recover if the fetch failed.
+                        streamId = rtcTokenForTarget ?: ""
+                    )
+                    startActivity(
+                        Intent(this@AgoraPublisherActivity, ViewLiveShowActivity::class.java)
+                            .putExtra("roomId", targetRoomId)
+                            .putParcelableArrayListExtra("streamList", arrayListOf(targetStream))
+                    )
+                    finishAfterTransition()
+                }
             } else {
                 Alerts.error(this@AgoraPublisherActivity, "Please select a seller")
             }

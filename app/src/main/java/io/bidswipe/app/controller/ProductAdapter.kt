@@ -100,7 +100,9 @@ class ProductAdapter(
 				if (item != null) item.streamQuantity = 1
 			}
 
-			bind.img.loadUrl(mCtx, item?.images?.first() ?: "")
+			// Basecamp #9991372302: use firstOrNull() to avoid NoSuchElementException
+			// when images list is non-null but empty (e.g. newly created product).
+			bind.img.loadUrl(mCtx, item?.images?.firstOrNull() ?: "")
 
 		}
 	}

@@ -2494,7 +2494,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
         sendTipSheet.show()
     }
 
-    private fun onRaid(targetRoomId: String, rtcToken: String) {
+    private fun onRaid(targetRoomId: String, @Suppress("UNUSED_PARAMETER") rtcToken: String) {
+        // Basecamp #9986387480 (round 3): fix black video for raided viewers.
+        // The old path used the rtcToken from the socket payload directly, which
+        // was often empty or mis-mapped, causing a blank Agora channel join.
+        // Fix: mirror the normal viewer join path exactly \u2014
+        //   1. tear down the old session (socket + Agora)
+        //   2. reset state (roomID, liveShowData, streamID)
+        //   3. re-join the socket room (hydrates chat and UI)
+        //   4. fetch show details via REST (same API the home-screen uses) to get
+        //      the real rtcToken, then join Agora exactly like a fresh entry.
         viewModel.viewModelScope.launch {
             try {
                 socketManager?.leaveRoom(roomID, userId)
@@ -2502,15 +2511,15 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 commentAdapter.notifyDataSetChanged()
                 currentRemoteUid = null
                 clearRemoteVideo()
-                roomID = targetRoomId
-                streamID = rtcToken
                 App.manager.leaveChannel()
-                App.manager.joinSubscriberChannel(streamID, roomID)
-                currentRemoteUid?.let { uid ->
-                    setupRemoteVideo(uid)
-                }
+
+                // Update room state BEFORE re-joining socket/Agora.
+                roomID = targetRoomId
+                streamID = ""          // blank \u2014 will be filled by getShowDetails result
+                liveShowData = null    // clear so the getShowDetailsRepo observer fires
 
                 socketManager?.joinRoom(roomID, userId) {
+                    socketManager?.joinShow(userId, roomID)
                     socketManager?.sendMessage(
                         roomID,
                         "Joined \uD83D\uDC4B",
@@ -2518,6 +2527,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         userName,
                         userImage
                     )
+                }
+
+                // Parse showId from roomId (format: live_room_{userId}_{showId})
+                // and fetch show details. The getShowDetailsRepo observer (existing,
+                // line ~986) will join Agora with the real rtcToken when it arrives.
+                val targetShowId = targetRoomId.split("_").lastOrNull()?.takeIf { it.isNotBlank() }
+                if (targetShowId != null) {
+                    cancelRestFallback()
+                    restFallbackFired = false
+                    viewModel.getShowDetails(targetShowId)
                 }
             } catch (e: Exception) {
                 log("Raid failed: ${e.message}")

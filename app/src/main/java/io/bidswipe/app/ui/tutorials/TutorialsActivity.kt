@@ -55,6 +55,12 @@ class TutorialsActivity : BaseActivity() {
 		}
 
 		type = intent.getStringExtra("type").toString()
+		// Basecamp #9991479337 / #9986427172: showId passed from ShowDetailsActivity so
+		// PrepareYourShowFragment can prefill step completion from show data.
+		val incomingShowId = intent.getStringExtra("showId").orEmpty()
+		if (incomingShowId.isNotBlank()) {
+			viewModel.showId = incomingShowId
+		}
 
 		navHostFragment =
 			supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment

@@ -368,12 +368,10 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 	}
 
 	private fun canAddSellerContent(): Boolean {
+		// Basecamp #9991372302: KYC gate removed — iOS and PWA have no such gate.
+		// Only require seller identity verification (same as iOS/PWA).
 		val profile = App.profileResponse.value
 		if (profile?.sellerIdentityStatus != "verified") {
-			showVerificationDialog()
-			return false
-		}
-		if (App.checkKycResponse.value?.kycStatus != "active") {
 			showVerificationDialog()
 			return false
 		}
@@ -382,18 +380,15 @@ class ShowsFragment : BaseFragment<SellerHubViewModel, FragmentShowsBinding>() {
 
 	private fun showVerificationDialog() {
 		val sellerStatus = App.profileResponse.value?.sellerIdentityStatus
-		val kycActive = App.checkKycResponse.value?.kycStatus == "active"
 		AppBottomSheet(
 			mCtx,
 			R.drawable.ic_info,
 			title = when {
-				sellerStatus == "verified" && !kycActive -> "Complete KYC Verification"
 				sellerStatus == "pending" -> "Verification Pending!"
 				sellerStatus == "rejected" -> "Verification Rejected!"
 				else -> "Become a Verified Seller!"
 			},
 			message = when {
-				sellerStatus == "verified" && !kycActive -> "Your seller profile is verified, but KYC verification is still required before you can create products or shows."
 				sellerStatus == "pending" -> "Your seller verification request is currently pending. You will be able to access this functionality once it is approved by the admin."
 				sellerStatus == "rejected" -> "Your seller verification request was not approved. Please reapply to complete the verification process."
 				else -> "Before you interact with live shows, you need to complete seller verification."

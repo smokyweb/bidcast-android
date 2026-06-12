@@ -240,10 +240,12 @@ class ShowDetailsActivity : BaseActivity() {
         }
 
         // Basecamp #9991479337 — "Let's Prepare" entry for show owner.
+        // Pass showId so PrepareYourShowFragment can prefill step completion state.
         bind.letsPrepareBtn.setHapticClickListener {
             startActivity(
                 Intent(this, TutorialsActivity::class.java)
                     .putExtra("type", "letsPrep")
+                    .putExtra("showId", viewModel.showId)
             )
         }
 
@@ -270,7 +272,11 @@ class ShowDetailsActivity : BaseActivity() {
                     val isOwner = showData?.userId?.toString() == userId
                     bind.letsPrepareBtn.isVisible = isOwner
                     bind.pairSecondDeviceBtn.isVisible = isOwner
-                    bind.joinAsCohostBtn.isVisible = !isOwner
+                    // Basecamp #9991482788: "Join as Cohost" must be visible to EVERYONE
+                    // (owner and non-owner). The primary use case is the same seller's
+                    // SECOND DEVICE — logged in as owner — entering a pairing code.
+                    // Restricting to !isOwner broke that flow.
+                    bind.joinAsCohostBtn.isVisible = true
 
                     bind.repeat.text = showData?.repeatValue?.asCapital() ?: "N/A"
                     bind.auctionType.text = showData?.auction?.name ?: "N/A"

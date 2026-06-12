@@ -16,6 +16,24 @@
         app:showBackButton="true"
         app:showPrimaryIcon="false" />
 
+    <!-- Basecamp #9991479337 / #9986427172: show title when opened from ShowDetailsActivity.
+         Hidden (gone) when no showId is provided (training mode). -->
+    <TextView
+        android:id="@+id/showContextTitle"
+        style="@style/BodyLarge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/stepProgress"
         style="@style/circularProgressStyle"
@@ -23,7 +41,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/margin"
         android:progress="15"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/showContextTitle"
         app:trackCornerRadius="6dp"
         app:trackThickness="8dp"
         app:indicatorColor="@color/primary" />

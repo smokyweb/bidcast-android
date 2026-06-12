@@ -300,6 +300,64 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			}
 		}
 
+		// Basecamp #9991479337 / #9986427172: when a showId is present (entry from
+		// ShowDetailsActivity "Let's Prepare"), fetch show details and prefill step
+		// completion — mirror the PWA's fetchShowContext() in
+		// sellerTrainingLetsPrepareShow.blade.php.
+		// Without showId the behaviour is unchanged (manual progression, training mode).
+		val contextShowId = viewModel.showId.takeIf { it.isNotBlank() }
+		if (contextShowId != null) {
+			bind.loader.isVisible = true
+			viewModel.getShowDetails(contextShowId)
+		}
+
+		viewModel.getShowDetailsRepo.observe(viewLifecycleOwner) { res ->
+			when (res) {
+				is Resource.Success -> {
+					viewModel.getShowDetailsRepo.value = null
+					bind.loader.isVisible = false
+					val show = res.value.data ?: return@observe
+
+					// Show title (visible when show context is active).
+					val title = show.title?.takeIf { it.isNotBlank() }
+					if (title != null) {
+						bind.showContextTitle.text = title
+						bind.showContextTitle.isVisible = true
+					}
+
+					// Step 0 (Schedule): complete when the show has both date and time.
+					val hasSchedule = !show.date.isNullOrBlank() && !show.time.isNullOrBlank()
+
+					// Step 1 (Add Products): complete when the show has >=1 product_id.
+					// product_ids is List<String?> per GetShowDetailsResponse.Data.
+					val hasProducts = (show.productIds?.filterNotNull()?.size ?: 0) >= 1
+
+					// Derive completed-step count (steps 0 and 1 only — mirrors PWA).
+					val derivedComplete = when {
+						hasSchedule && hasProducts -> 2
+						hasSchedule -> 1
+						else -> 0
+					}
+
+					if (derivedComplete > 0 && viewModel.showList.isNotEmpty()) {
+						for (i in 0 until derivedComplete.coerceAtMost(viewModel.showList.size)) {
+							viewModel.showList[i]?.status = "completed"
+						}
+						if (derivedComplete < viewModel.showList.size) {
+							viewModel.showList[derivedComplete]?.status = "locked"
+						}
+						bind.stepProgress.progress = derivedComplete + 1
+						bind.recycler.adapter?.notifyDataSetChanged()
+					}
+				}
+				is Resource.Error -> {
+					viewModel.getShowDetailsRepo.value = null
+					bind.loader.isVisible = false
+					// Silently ignore — fall through to training-mode behaviour
+				}
+				else -> {}
+			}
+		}
 
 	}
 
