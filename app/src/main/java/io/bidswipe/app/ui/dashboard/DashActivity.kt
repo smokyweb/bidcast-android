@@ -402,10 +402,9 @@ class DashActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                     verificationDialog()
                     return
                 }
-                if (App.checkKycResponse.value?.kycStatus != "active") {
-                    verificationDialog()
-                    return
-                }
+                // Basecamp #9991372302: KYC gate removed for parity — iOS and the
+                // PWA never blocked product/show creation on KYC status, only on
+                // seller verification. (Same change as the seller-hub fragments.)
                 if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                     showPaymentAndAddressSheet()
                     return

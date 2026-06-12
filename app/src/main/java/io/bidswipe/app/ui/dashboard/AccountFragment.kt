@@ -443,10 +443,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 verificationDialog()
                 return@setHapticClickListener
             }
-            if (App.checkKycResponse.value?.kycStatus != "active") {
-                verificationDialog()
-                return@setHapticClickListener
-            }
+            // Basecamp #9991372302: KYC gate removed for parity with iOS/PWA.
             if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                 showPaymentAndAddressSheet()
                 return@setHapticClickListener
@@ -463,10 +460,7 @@ class AccountFragment : BaseFragment<DashViewModel, FragmentAccountBinding>() {
                 verificationDialog()
                 return@setHapticClickListener
             }
-            if (App.checkKycResponse.value?.kycStatus != "active") {
-                verificationDialog()
-                return@setHapticClickListener
-            }
+            // Basecamp #9991372302: KYC gate removed for parity with iOS/PWA.
             if (profile.hasCardAdded != true || profile.hasShippingAddress != true) {
                 showPaymentAndAddressSheet()
                 return@setHapticClickListener
