@@ -24,7 +24,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:isScrollContainer="true"
-        app:layout_constraintBottom_toTopOf="@+id/tip_settings_btn"
+        app:layout_constraintBottom_toTopOf="@+id/lets_prepare_btn"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -259,6 +259,48 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Basecamp #9991482788: Join as Cohost — visible to non-owners. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/join_as_cohost_btn"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="4dp"
+        android:text="Join as Cohost"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tip_settings_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Basecamp #9991482788: Pair Second Device — owner only. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pair_second_device_btn"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="4dp"
+        android:text="Pair Second Device"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/join_as_cohost_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Basecamp #9991479337: Let's Prepare — owner only. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/lets_prepare_btn"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin"
+        android:layout_marginBottom="4dp"
+        android:text="Let's Prepare"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/pair_second_device_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Basecamp #9940152629 (2026-05-29): tip settings row above main button bar. -->
     <com.google.android.material.button.MaterialButton

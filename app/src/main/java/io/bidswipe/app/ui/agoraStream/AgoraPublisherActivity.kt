@@ -83,10 +83,12 @@ import io.bidswipe.app.network.response.RandomizerTemplate
 import io.bidswipe.app.network.response.socket.AuctionStartedBreakSpotResponse
 import io.bidswipe.app.network.response.socket.AuctionStartedResponse
 import io.bidswipe.app.network.response.socket.GetFreebieObject
+import io.bidswipe.app.model.StreamModel
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.sellerProfile.SellerProfileActivity
+import io.bidswipe.app.ui.watchStream.ViewLiveShowActivity
 import io.bidswipe.app.utils.AgoraManager
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
@@ -183,6 +185,12 @@ class AgoraPublisherActivity : BaseActivity() {
     private var isShowLive = false
     private var isAuctionStarted = false
     private var hasAutoAdvancedOnTimerEnd = false
+    // Basecamp #9986387480 (round 2): set true immediately before calling
+    // destroyEngine/finish after a successful raid, so onDestroy does NOT
+    // broadcast endRoom to viewers. The server closes the source room on raid
+    // — a redundant endRoom from this client would fire the roomEnded listener
+    // on all viewers before the raid redirect arrives, kicking them out early.
+    private var isRaidingOut = false
     // Basecamp #9934001770 (2026-05-29): set true when this device is the
     // co-host (second device) that joined via CoHostJoinActivity. When true:
     // – hide controls that belong only to the primary host
@@ -1103,7 +1111,10 @@ class AgoraPublisherActivity : BaseActivity() {
             // Invited cohosts already call leaveAsCoHost() from the cut button (which
             // calls leaveInvitedCoHost / cohost_leave) before onDestroy is reached;
             // a plain leave_room here is harmless but keeps the server in sync.
-            if (!isCoHost && !isSameAccountSecondDevice) {
+            // Basecamp #9986387480 (round 2): also skip endRoom when raiding out —
+            // the server closes the source room on raid; sending endRoom here would
+            // kick viewers before the receiveRaid redirect reaches them.
+            if (!isCoHost && !isSameAccountSecondDevice && !isRaidingOut) {
                 socketManager?.emitEndRoom(roomID)
             }
             socketManager?.leaveRoom(roomID, userId)
@@ -2589,14 +2600,31 @@ class AgoraPublisherActivity : BaseActivity() {
         liveSellerSheetBind.addBtn.setHapticClickListener {
             if (selectedItem != null) {
                 log("Selected seller: ${selectedItem?.name}")
+                val targetRoomId = selectedItem?.roomId.orEmpty()
+                val targetHostId = selectedItem?.id.toString()
                 socketManager?.createRaid(
                     roomID,
-                    selectedItem?.roomId.toString(),
-                    selectedItem?.id.toString(),
+                    targetRoomId,
+                    targetHostId,
                     userId
                 )
                 liveSellerSheet.dismiss()
+                // Basecamp #9986387480 (round 2): after a successful raid the
+                // seller should join the TARGET show as a viewer, not go home.
+                // Set isRaidingOut=true BEFORE destroyEngine so onDestroy skips
+                // emitEndRoom (the server already closes the source room on raid).
+                isRaidingOut = true
                 App.manager.destroyEngine()
+                // Build a single-item stream list for the target show.
+                val targetStream = StreamModel(
+                    roomId = targetRoomId,
+                    streamId = "" // no token needed; viewer will use socket data
+                )
+                startActivity(
+                    Intent(this@AgoraPublisherActivity, ViewLiveShowActivity::class.java)
+                        .putExtra("roomId", targetRoomId)
+                        .putParcelableArrayListExtra("streamList", arrayListOf(targetStream))
+                )
                 finishAfterTransition()
             } else {
                 Alerts.error(this@AgoraPublisherActivity, "Please select a seller")

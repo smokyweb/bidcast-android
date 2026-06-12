@@ -358,7 +358,11 @@ class SocketManager private constructor(
     }
 
     fun onRoomEnded(listener: (JSONObject) -> Unit) {
-//        socket?.off("roomEnded")
+        // De-dupe: remove any previously registered roomEnded handler before
+        // adding this one. Without this, ViewPager fragments that call onRoomEnded
+        // multiple times (e.g. on reconnect) accumulate duplicate listeners and
+        // fire in unexpected order. Basecamp #9986387480 / #9991407549.
+        socket?.off("roomEnded")
         socket?.on("roomEnded") { args ->
             val obj = args.firstOrNull()
             if (obj is JSONObject) {

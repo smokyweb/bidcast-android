@@ -560,35 +560,25 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
             socketManager?.onRoomEnded { json ->
                 log("END GOT WATCH FRAGMENT $json")
+                // Basecamp #9991407549: buyers must be kicked automatically when
+                // the seller ends the show. Show a brief toast and finish — do not
+                // block on a modal dialog. Guard with roomID check so a stale
+                // roomEnded from the source room doesn't fire after a raid
+                // redirects this viewer to the target room (roomID has been
+                // updated to targetRoomId by onRaid() at that point).
                 runSafe {
                     requireActivity().runOnUiThread {
                         if (json.optString("room_end") == roomID) {
                             liveEndedSheet?.dismiss()
-                            liveEndedSheet = AppBottomSheet(
+                            liveEndedSheet = null
+                            android.widget.Toast.makeText(
                                 mCtx,
-                                R.drawable.ic_info,
-                                "Live show ended!",
-                                "The show $showTitle has ended.",
-                                primaryBtnText = "Go Back",
-                                secondaryBtnText = "Go Back",
-                                canCancel = false,
-                                showSecondary = false,
-                                alertType = AlertType.INFO,
-                                clicks = object : AlertClicks {
-                                    override fun primaryClick(dialog: AppBottomSheet) {
-                                        dialog.dismiss()
-                                        App.manager.destroyEngine()
-                                        activity?.setResult(Activity.RESULT_OK)
-                                        finish()
-                                    }
-
-                                    override fun secondaryClick(dialog: AppBottomSheet) {
-                                        dialog.dismiss()
-                                    }
-                                }
-
-                            )
-                            liveEndedSheet?.show()
+                                "Live stream ended",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                            App.manager.destroyEngine()
+                            activity?.setResult(Activity.RESULT_OK)
+                            finish()
                         }
                     }
                 }

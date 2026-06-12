@@ -28,11 +28,13 @@ import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetPromotePlansResponse
 import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.network.response.toLiveShowProduct
+import io.bidswipe.app.ui.cohost.CoHostJoinActivity
 import io.bidswipe.app.ui.custom.AlertType
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.more.MoreActivity
 import io.bidswipe.app.ui.product.ProductDetailsActivity
 import io.bidswipe.app.ui.sellerHub.SellerVerificationActivity
+import io.bidswipe.app.ui.tutorials.TutorialsActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Const
 import io.bidswipe.app.utils.Prefs
@@ -237,6 +239,24 @@ class ShowDetailsActivity : BaseActivity() {
             }
         }
 
+        // Basecamp #9991479337 — "Let's Prepare" entry for show owner.
+        bind.letsPrepareBtn.setHapticClickListener {
+            startActivity(
+                Intent(this, TutorialsActivity::class.java)
+                    .putExtra("type", "letsPrep")
+            )
+        }
+
+        // Basecamp #9991482788 — "Pair Second Device" for show owner.
+        bind.pairSecondDeviceBtn.setHapticClickListener {
+            showPairSecondDeviceDialog()
+        }
+
+        // Basecamp #9991482788 — "Join as Cohost" for non-owners (and visible to all).
+        bind.joinAsCohostBtn.setHapticClickListener {
+            startActivity(Intent(this, CoHostJoinActivity::class.java))
+        }
+
         viewModel.getShowDetailsRepo.observe(this) {
             when (it) {
                 is Resource.Success -> {
@@ -245,6 +265,12 @@ class ShowDetailsActivity : BaseActivity() {
                     showData = it.value.data
 
                     bind.showTitle.text = showData?.title ?: "Show Details"
+
+                    // Basecamp #9991479337 / #9991482788 — show owner-only actions.
+                    val isOwner = showData?.userId?.toString() == userId
+                    bind.letsPrepareBtn.isVisible = isOwner
+                    bind.pairSecondDeviceBtn.isVisible = isOwner
+                    bind.joinAsCohostBtn.isVisible = !isOwner
 
                     bind.repeat.text = showData?.repeatValue?.asCapital() ?: "N/A"
                     bind.auctionType.text = showData?.auction?.name ?: "N/A"
@@ -543,6 +569,124 @@ class ShowDetailsActivity : BaseActivity() {
 
         makeOfferSheet.show()
 
+    }
+
+    // Basecamp #9991482788 — co-host pairing dialog for the show owner.
+    // Mirrors AgoraPublisherActivity.showCoHostPairingDialog() but operates from
+    // the details screen (pre-show), using the scheduled show id from the ViewModel.
+    private var coHostPairingId: Int? = null
+
+    private fun showPairSecondDeviceDialog() {
+        val scheduleShowId = viewModel.showId ?: ""
+        if (scheduleShowId.isBlank()) {
+            errorToast("Show ID not available")
+            return
+        }
+
+        val dialog = android.app.Dialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_co_host_pairing, null, false)
+        dialog.setContentView(view)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.92).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.setCancelable(true)
+
+        val codeTv = view.findViewById<android.widget.TextView>(R.id.coHostCodeTv)
+        val expiresTv = view.findViewById<android.widget.TextView>(R.id.coHostExpiresTv)
+        val statusTv = view.findViewById<android.widget.TextView>(R.id.coHostStatusTv)
+        val generateBtn = view.findViewById<android.widget.Button>(R.id.coHostGenerateBtn)
+        val revokeBtn = view.findViewById<android.widget.Button>(R.id.coHostRevokeBtn)
+        val closeBtn = view.findViewById<android.view.View>(R.id.coHostCloseBtn)
+
+        closeBtn.setOnClickListener { dialog.dismiss() }
+        coHostPairingId = null
+
+        fun generate() {
+            statusTv.text = "Generating code…"
+            statusTv.setTextColor(android.graphics.Color.parseColor("#666666"))
+            generateBtn.isEnabled = false
+            lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    try {
+                        val token = Prefs(this@ShowDetailsActivity).token()
+                        val body = org.json.JSONObject().apply {
+                            put("schedule_show_id", scheduleShowId.toIntOrNull() ?: 0)
+                        }.toString()
+                        val url = URL("${Const.BASE_URL}/api/product/co-host/pair")
+                        val conn = url.openConnection() as HttpURLConnection
+                        conn.requestMethod = "POST"
+                        conn.setRequestProperty("Content-Type", "application/json")
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Authorization", "Bearer $token")
+                        conn.doOutput = true
+                        conn.outputStream.use { os -> os.write(body.toByteArray()) }
+                        val code = conn.responseCode
+                        val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+                        val text = stream.bufferedReader().use { it.readText() }
+                        conn.disconnect()
+                        Pair(code, text)
+                    } catch (e: Exception) {
+                        Pair(-1, e.message ?: "error")
+                    }
+                }
+                generateBtn.isEnabled = true
+                try {
+                    val json = org.json.JSONObject(result.second)
+                    if (json.optString("status") == "success") {
+                        val data = json.optJSONObject("data")
+                        codeTv.text = data?.optString("pairing_code") ?: "——————"
+                        val exp = data?.optString("expires_at") ?: ""
+                        expiresTv.text = if (exp.isNotEmpty()) "Expires " + exp.take(16) else ""
+                        coHostPairingId = data?.optInt("id")
+                        revokeBtn.visibility = android.view.View.VISIBLE
+                        statusTv.text = "Share this code with your second device."
+                        statusTv.setTextColor(android.graphics.Color.parseColor("#16A34A"))
+                    } else {
+                        statusTv.text = json.optString("message", "Could not generate code.")
+                        statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                    }
+                } catch (e: Exception) {
+                    statusTv.text = "Could not generate code."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                }
+            }
+        }
+
+        revokeBtn.setOnClickListener {
+            val id = coHostPairingId ?: return@setOnClickListener
+            statusTv.text = "Revoking…"
+            lifecycleScope.launch {
+                val ok = withContext(Dispatchers.IO) {
+                    try {
+                        val token = Prefs(this@ShowDetailsActivity).token()
+                        val url = URL("${Const.BASE_URL}/api/product/co-host/$id")
+                        val conn = url.openConnection() as HttpURLConnection
+                        conn.requestMethod = "DELETE"
+                        conn.setRequestProperty("Accept", "application/json")
+                        conn.setRequestProperty("Authorization", "Bearer $token")
+                        val rc = conn.responseCode
+                        conn.disconnect()
+                        rc in 200..299
+                    } catch (e: Exception) { false }
+                }
+                if (ok) {
+                    codeTv.text = "——————"
+                    expiresTv.text = ""
+                    revokeBtn.visibility = android.view.View.GONE
+                    coHostPairingId = null
+                    statusTv.text = "Pairing revoked."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#666666"))
+                } else {
+                    statusTv.text = "Could not revoke pairing."
+                    statusTv.setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                }
+            }
+        }
+
+        generateBtn.setOnClickListener { generate() }
+        dialog.show()
+        generate()
     }
 
 }

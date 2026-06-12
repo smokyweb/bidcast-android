@@ -63,6 +63,10 @@ class TutorialsActivity : BaseActivity() {
 		val id = when (type.trim()) {
 			"promoteTools" -> R.id.howToSellFragment
 			"refer" -> R.id.referFriendFragment
+			// Basecamp #9991479337: "Let's Prepare" entry from ShowDetailsActivity
+			// jumps directly to the prepare-your-show step rather than forcing
+			// the seller to walk through the full get-started intro.
+			"letsPrep" -> R.id.prepareYourShowFragment
 			else -> {
 				R.id.getStartedFragment
 			}
