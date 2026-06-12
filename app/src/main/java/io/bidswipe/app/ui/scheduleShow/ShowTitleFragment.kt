@@ -198,9 +198,16 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
                     // Basecamp #9991372302: prefill per-product stream quantities from
                     // the saved show. The server returns product_stream_quantities as a
-                    // {product_id: qty} map (string keys). Default to 0 (unset) so
-                    // the adapter initialises to full stock when the map is absent.
-                    val streamQtyMap = mData?.productStreamQuantities ?: emptyMap()
+                    // JSON-encoded STRING like {"1016":2} (verified on live API), so
+                    // parse it defensively; absent/invalid -> empty map -> adapter
+                    // initialises to full stock.
+                    val streamQtyMap: Map<String, Int> = try {
+                        val raw = mData?.productStreamQuantities
+                        if (raw.isNullOrBlank()) emptyMap() else {
+                            val obj = org.json.JSONObject(raw)
+                            obj.keys().asSequence().associateWith { k -> obj.optInt(k, 0) }
+                        }
+                    } catch (_: Exception) { emptyMap() }
                     mData?.products?.forEach { data ->
                         if(data!=null) {
                             if (!viewModel.currentProducts.any { existing -> existing.id == data.id }) {
