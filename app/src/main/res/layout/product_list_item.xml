@@ -146,6 +146,68 @@
                     android:layout_height="wrap_content"
                     android:text="Quantity: 1" />
 
+                <!-- Basecamp #9991372302: per-product stream quantity stepper.
+                     Shown when product stock > 1; hidden for single-unit items. -->
+                <LinearLayout
+                    android:id="@+id/streamQtyLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sell in show:"
+                        style="@style/BodySmall" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/streamQtyMinus"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginStart="8dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:padding="0dp"
+                        android:text="−"
+                        android:textSize="14sp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp" />
+
+                    <TextView
+                        android:id="@+id/streamQtyValue"
+                        style="@style/BodySmall"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="1" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/streamQtyPlus"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:padding="0dp"
+                        android:text="+"
+                        android:textSize="14sp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp" />
+
+                    <TextView
+                        android:id="@+id/streamQtyMax"
+                        style="@style/BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="of 1" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>

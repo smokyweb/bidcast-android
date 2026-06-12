@@ -99,6 +99,8 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
         tags: List<RequestBody>? = null,
         // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
         isVerifiedOnly: RequestBody? = null,
+        // Basecamp #9991372302: per-product stream quantities, parallel to productIds.
+        productStreamQuantities: List<Int>? = null,
     ) = call {
         if (showId != null) {
             api.updateScheduleShow(
@@ -118,6 +120,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
                 showId,
                 tags,
                 isVerifiedOnly,
+                productStreamQuantities,
             )
         } else {
             api.storeScheduleShow(
@@ -136,6 +139,7 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
                 isExplicit,
                 tags,
                 isVerifiedOnly,
+                productStreamQuantities,
             )
         }
     }

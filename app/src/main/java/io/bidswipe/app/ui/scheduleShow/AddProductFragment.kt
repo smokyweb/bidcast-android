@@ -212,6 +212,18 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 				)
 			}
 
+			// Basecamp #9991372302: build stream quantities in lockstep with product ids.
+			// streamQuantity defaults to 0 (unset) until the adapter initialises it to
+			// full stock; clamp to [1, stock] defensively on submit.
+			val streamQtyList = mutableListOf<Int>()
+			viewModel.currentProducts.forEach { product ->
+				val stock = product.quantity?.toIntOrNull() ?: 1
+				var qty = if (product.streamQuantity < 1) stock else product.streamQuantity
+				if (qty < 1) qty = 1
+				if (stock > 0 && qty > stock) qty = stock
+				streamQtyList.add(qty)
+			}
+
 			bind.loader.isVisible = true
 
 			if (from == "showTutorial") {
@@ -266,6 +278,8 @@ class AddProductFragment : BaseFragment<ScheduleShowViewModel, FragmentAddProduc
 					// Only forward when the seller explicitly toggled it on — otherwise
 					// send null so backend default (false) applies.
 					isVerifiedOnly = if (viewModel.verifiedOnly == "1") "1".request() else null,
+					// Basecamp #9991372302: per-product stream quantities, aligned with productIds.
+					productStreamQuantities = streamQtyList,
 				)
 			}
 

@@ -50,6 +50,11 @@ data class GetShowDetailsResponse(
         val latestViewerCount: Int?,
         @SerializedName("product_ids")
         val productIds: List<String?>?,
+        // Basecamp #9991372302: per-product stream quantities returned by the server
+        // as a {product_id: qty} map. May be null/absent for shows created before
+        // this feature, in which case we default to full stock per product.
+        @SerializedName("product_stream_quantities")
+        val productStreamQuantities: Map<String, Int>?,
         @SerializedName("products")
         val products: List<Product?>?,
         @SerializedName("promote_show_id")

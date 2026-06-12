@@ -83,6 +83,9 @@ data class Product(
 	val width: Double?,
 	var selected: Boolean = false,
 	var isCurrent: Boolean? = false,
+	// Basecamp #9991372302: per-product quantity to sell in this show (default = full stock).
+	// Stored on the Product so it survives ViewModel rotation and list-diffing.
+	var streamQuantity: Int = 0,
 	// Basecamp #9933847997 (2026-05-29): pre-bid fields returned by getShowDetails
 	// and the product list on upcoming/live shows.
 	@SerializedName("sale_format")

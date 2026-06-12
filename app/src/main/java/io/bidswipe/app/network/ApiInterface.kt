@@ -260,6 +260,9 @@ interface ApiInterface {
         @Part("tags[]") tags: @JvmSuppressWildcards List<RequestBody>? = null,
         // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
         @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
+        // Basecamp #9991372302: per-product stream quantities, parallel to product_ids[].
+        // Each value is an int >= 1; absent entries default to full stock server-side.
+        @Part("product_stream_quantities[]") productStreamQuantities: @JvmSuppressWildcards List<Int>? = null,
     ): CreateShowResponse
 
     @Multipart
@@ -283,6 +286,8 @@ interface ApiInterface {
         @Part("tags[]") tags: @JvmSuppressWildcards List<RequestBody>? = null,
         // Basecamp #9933883175 (2026-05-27): seller-controlled verified-buyers-only gate.
         @Part("is_verified_only") isVerifiedOnly: RequestBody? = null,
+        // Basecamp #9991372302: per-product stream quantities, parallel to product_ids[].
+        @Part("product_stream_quantities[]") productStreamQuantities: @JvmSuppressWildcards List<Int>? = null,
     ): CreateShowResponse
 
     @GET("api/get-auction-type")

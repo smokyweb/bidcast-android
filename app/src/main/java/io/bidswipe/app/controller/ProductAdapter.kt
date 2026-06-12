@@ -2,6 +2,7 @@ package io.bidswipe.app.controller
 
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
@@ -61,11 +62,44 @@ class ProductAdapter(
 			bind.productName.text = item?.title?.asCapital()
 
 			bind.prodSubTitle.text = item?.category?.name
+			val stock = item?.quantity?.toIntOrNull() ?: 1
 			bind.quantity.text = buildString {
 				append("Quantity: ")
 				append(item?.quantity)
 			}
-			
+
+			// Basecamp #9991372302: show the stream-qty stepper only when stock > 1.
+			// For single-unit products the quantity to sell is always 1 — no stepper needed.
+			if (stock > 1) {
+				bind.streamQtyLayout.visibility = View.VISIBLE
+				// Initialise streamQuantity to full stock on first display (0 = unset).
+				if ((item?.streamQuantity ?: 0) < 1) {
+					item?.streamQuantity = stock
+				}
+				val current = item?.streamQuantity ?: stock
+				bind.streamQtyValue.text = current.toString()
+				bind.streamQtyMax.text = "of $stock"
+
+				bind.streamQtyMinus.setHapticClickListener {
+					val cur = item?.streamQuantity ?: stock
+					if (cur > 1) {
+						item?.streamQuantity = cur - 1
+						bind.streamQtyValue.text = (cur - 1).toString()
+					}
+				}
+				bind.streamQtyPlus.setHapticClickListener {
+					val cur = item?.streamQuantity ?: stock
+					if (cur < stock) {
+						item?.streamQuantity = cur + 1
+						bind.streamQtyValue.text = (cur + 1).toString()
+					}
+				}
+			} else {
+				bind.streamQtyLayout.visibility = View.GONE
+				// Ensure streamQuantity is 1 for single-unit products.
+				if (item != null) item.streamQuantity = 1
+			}
+
 			bind.img.loadUrl(mCtx, item?.images?.first() ?: "")
 
 		}
