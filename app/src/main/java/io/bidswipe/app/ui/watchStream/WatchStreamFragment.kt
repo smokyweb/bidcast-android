@@ -594,9 +594,11 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         }
                         if (streamID.isEmpty() || liveShowData?.rtcToken != streamID) {
                             streamID = liveShowData?.rtcToken ?: ""
+                            android.util.Log.d("RAID_QA", "onRoomCreated: roomID=$roomID rtcToken=${if (streamID.isNotEmpty()) "non-null(${streamID.take(12)}...)" else "EMPTY"} currentRemoteUid=$currentRemoteUid")
                             if (streamID.isNotEmpty()) {
                                 App.manager.joinSubscriberChannel(streamID, roomID)
                                 currentRemoteUid?.let { uid ->
+                                    android.util.Log.d("RAID_QA", "onRoomCreated: setupRemoteVideo uid=$uid")
                                     setupRemoteVideo(uid)
                                 }
                             }
@@ -1035,10 +1037,16 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         sellerImage = seller.image
                         showId = d.id?.toString()
                         showTitle = d.title
-                        if (streamID.isBlank() && !d.rtcToken.isNullOrBlank()) {
-                            streamID = d.rtcToken
+                        val rtcFromRest = d.rtcToken
+                        android.util.Log.d("RAID_QA", "getShowDetailsRepo: showId=${d.id} rtcToken=${if (!rtcFromRest.isNullOrBlank()) "non-null(${rtcFromRest.take(12)}...)" else "NULL/BLANK"} streamID_current=${if (streamID.isBlank()) "BLANK" else "set"}")
+                        if (streamID.isBlank() && !rtcFromRest.isNullOrBlank()) {
+                            streamID = rtcFromRest
+                            android.util.Log.d("RAID_QA", "getShowDetailsRepo: calling joinSubscriberChannel, currentRemoteUid=$currentRemoteUid")
                             App.manager.joinSubscriberChannel(streamID, roomID)
-                            currentRemoteUid?.let { uid -> setupRemoteVideo(uid) }
+                            currentRemoteUid?.let { uid ->
+                                android.util.Log.d("RAID_QA", "getShowDetailsRepo: setupRemoteVideo uid=$uid (already joined)")
+                                setupRemoteVideo(uid)
+                            }
                         }
                         updateSessionUI()
                     }
@@ -1294,8 +1302,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun attachAgoraCallbacks() {
+        android.util.Log.d("RAID_QA", "attachAgoraCallbacks: wiring onUserJoin/onUserLeave on current App.manager (engine=${if (App.manager.mRtcEngine != null) "alive" else "null"})")
         App.manager.onUserJoin = { uId, _ ->
             currentRemoteUid = uId
+            android.util.Log.d("RAID_QA", "onUserJoined: uid=$uId — calling setupRemoteVideo (roomID=$roomID)")
             log("ON USER JOIN $uId")
             activity?.runOnUiThread {
                 setupRemoteVideo(uId)
@@ -1314,6 +1324,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
 
     private fun setupRemoteVideo(uid: Int) {
+        android.util.Log.d("RAID_QA", "setupRemoteVideo: uid=$uid engine=${if (App.manager.mRtcEngine != null) "alive" else "NULL — video will not render"}")
         bind.hostView.removeAllViews()
         val surfaceView = SurfaceView(mCtx)
         val videoCanvas = VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid)
@@ -2495,28 +2506,40 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
     }
 
     private fun onRaid(targetRoomId: String, @Suppress("UNUSED_PARAMETER") rtcToken: String) {
-        // Basecamp #9986387480 (round 3): fix black video for raided viewers.
-        // The old path used the rtcToken from the socket payload directly, which
-        // was often empty or mis-mapped, causing a blank Agora channel join.
-        // Fix: mirror the normal viewer join path exactly \u2014
-        //   1. tear down the old session (socket + Agora)
-        //   2. reset state (roomID, liveShowData, streamID)
-        //   3. re-join the socket room (hydrates chat and UI)
-        //   4. fetch show details via REST (same API the home-screen uses) to get
-        //      the real rtcToken, then join Agora exactly like a fresh entry.
+        // Basecamp #9986387480 (round 4): fix black video for raided buyers.
+        // Previous fix (round 3) only called leaveChannel() \u2014 leaving the old engine
+        // alive. The stale engine had no channel-level reset: if Agora internally
+        // retained decode/render state, the new channel join rendered black.
+        // Fix: perform a FULL engine destroy + fresh initializeAgoraSDK(AUDIENCE)
+        // before rejoining, making the raid path identical to a cold ViewLiveShowActivity
+        // entry. Then re-attach the onUserJoin/onUserLeave callbacks so setupRemoteVideo
+        // fires correctly for the new host UID.
+        android.util.Log.d("RAID_QA", "BUYER RAID: receiveRaid fired, sourceRoom=$roomID -> targetRoom=$targetRoomId rtcToken_payload=${if (rtcToken.isNotBlank()) "non-null(${rtcToken.take(12)}...)" else "EMPTY"}")
         viewModel.viewModelScope.launch {
             try {
                 socketManager?.leaveRoom(roomID, userId)
                 commentList.clear()
-                commentAdapter.notifyDataSetChanged()
+                activity?.runOnUiThread { commentAdapter.notifyDataSetChanged() }
                 currentRemoteUid = null
-                clearRemoteVideo()
-                App.manager.leaveChannel()
+                activity?.runOnUiThread { clearRemoteVideo() }
+
+                // Full engine teardown \u2014 destroyEngine() calls RtcEngine.destroy() so
+                // the next join starts with a clean decoder/renderer state. This is the
+                // same sequence ViewLiveShowActivity uses on a cold entry.
+                android.util.Log.d("RAID_QA", "BUYER RAID: destroying old Agora engine (was AUDIENCE in source room)")
+                App.manager.destroyEngine()
+                // Reinitialize as AUDIENCE \u2014 same call ViewLiveShowActivity makes in onCreate.
+                android.util.Log.d("RAID_QA", "BUYER RAID: reinitializing Agora engine as CLIENT_ROLE_AUDIENCE")
+                App.manager.initializeAgoraSDK(io.agora.rtc2.Constants.CLIENT_ROLE_AUDIENCE)
+                // Re-attach event callbacks on the fresh engine so onUserJoined \u2192 setupRemoteVideo
+                // still routes to this fragment (attachAgoraCallbacks() is normally called from
+                // onResume, but onResume won't fire for an in-place raid).
+                activity?.runOnUiThread { attachAgoraCallbacks() }
 
                 // Update room state BEFORE re-joining socket/Agora.
                 roomID = targetRoomId
-                streamID = ""          // blank \u2014 will be filled by getShowDetails result
-                liveShowData = null    // clear so the getShowDetailsRepo observer fires
+                streamID = ""          // will be filled by getShowDetails REST result
+                liveShowData = null    // clear so the getShowDetailsRepo observer fires fresh
 
                 socketManager?.joinRoom(roomID, userId) {
                     socketManager?.joinShow(userId, roomID)
@@ -2530,9 +2553,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 }
 
                 // Parse showId from roomId (format: live_room_{userId}_{showId})
-                // and fetch show details. The getShowDetailsRepo observer (existing,
-                // line ~986) will join Agora with the real rtcToken when it arrives.
+                // and fetch show details. The getShowDetailsRepo observer will
+                // join Agora with the real rtcToken when the REST call lands.
                 val targetShowId = targetRoomId.split("_").lastOrNull()?.takeIf { it.isNotBlank() }
+                android.util.Log.d("RAID_QA", "BUYER RAID: targetShowId=$targetShowId \u2014 fetching getShowDetails for rtcToken")
                 if (targetShowId != null) {
                     cancelRestFallback()
                     restFallbackFired = false

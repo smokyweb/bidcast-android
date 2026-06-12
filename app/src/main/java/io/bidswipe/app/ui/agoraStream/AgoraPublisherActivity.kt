@@ -1083,7 +1083,18 @@ class AgoraPublisherActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        App.manager.destroyEngine()
+        // Basecamp #9986387480 (round 4): when the seller raids out, the engine was
+        // already destroyed at line 2624 (before startActivity) and App.manager has
+        // been replaced by ViewLiveShowActivity with a fresh AUDIENCE AgoraManager.
+        // Calling destroyEngine() here would destroy the viewer's new engine, causing
+        // the frozen/black first-frame the seller sees after landing in the target show.
+        // Skip the destroy when isRaidingOut — the engine is already gone.
+        if (!isRaidingOut) {
+            android.util.Log.d("RAID_QA", "onDestroy: not raiding out — destroying engine (normal close)")
+            App.manager.destroyEngine()
+        } else {
+            android.util.Log.d("RAID_QA", "onDestroy: isRaidingOut=true — skipping destroyEngine to protect viewer session")
+        }
 
         // Basecamp #9929851737: release the clip ExoPlayer when the activity
         // is destroyed. It is intentionally NOT released on clip-sheet dismiss
@@ -2621,6 +2632,7 @@ class AgoraPublisherActivity : BaseActivity() {
                 // call get-show-details-by-id, build StreamModel with the real
                 // rtcToken — identical to how the home-screen card tap does it.
                 isRaidingOut = true
+                android.util.Log.d("RAID_QA", "SELLER RAID: isRaidingOut=true, destroying broadcaster engine, targetRoom=$targetRoomId")
                 App.manager.destroyEngine()
                 val targetShowId = targetRoomId.split("_").lastOrNull()?.takeIf { it.isNotBlank() }
                 lifecycleScope.launch {
@@ -2646,6 +2658,7 @@ class AgoraPublisherActivity : BaseActivity() {
                             } catch (_: Exception) { null }
                         }
                     } else null
+                    android.util.Log.d("RAID_QA", "SELLER RAID: rtcToken for target=${if (rtcTokenForTarget != null) "non-null(${rtcTokenForTarget.take(12)}...)" else "NULL — will rely on 3.5s REST fallback"}")
                     val targetStream = StreamModel(
                         roomId = targetRoomId,
                         // Use the real rtc_token from show details (same field the home-screen
@@ -2653,6 +2666,7 @@ class AgoraPublisherActivity : BaseActivity() {
                         // 3.5 s REST fallback will recover if the fetch failed.
                         streamId = rtcTokenForTarget ?: ""
                     )
+                    android.util.Log.d("RAID_QA", "SELLER RAID: launching ViewLiveShowActivity as AUDIENCE, token=${targetStream.streamId.take(12).ifEmpty { "EMPTY" }}")
                     startActivity(
                         Intent(this@AgoraPublisherActivity, ViewLiveShowActivity::class.java)
                             .putExtra("roomId", targetRoomId)

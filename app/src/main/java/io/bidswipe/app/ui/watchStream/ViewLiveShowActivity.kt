@@ -49,9 +49,11 @@ class ViewLiveShowActivity : BaseActivity() {
             streamList = intent.getParcelableArrayListExtra<StreamModel>("streamList") as ArrayList<StreamModel>
 
         App.manager = AgoraManager(this, Const.APP_ID_AGORA)
+        android.util.Log.d("RAID_QA", "ViewLiveShowActivity: fresh AgoraManager created, will init as CLIENT_ROLE_AUDIENCE (${Constants.CLIENT_ROLE_AUDIENCE})")
 
         requestPerms(Const.PERMISSIONS) {
             if (it) {
+                android.util.Log.d("RAID_QA", "ViewLiveShowActivity: permissions granted — initializeAgoraSDK(AUDIENCE)")
                 App.manager.initializeAgoraSDK(Constants.CLIENT_ROLE_AUDIENCE)
             } else {
                 errorToast("Permissions not granted!")
