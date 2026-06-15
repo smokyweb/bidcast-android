@@ -794,6 +794,7 @@ interface ApiInterface {
     suspend fun promoteShow(
         @Part("schedule_show_id") scheduleShowId: RequestBody,
         @Part("promote_show_id") promoteShowId: RequestBody,
+        @Part("customer_payment_profile_id") customerPaymentProfileId: RequestBody?,
     ): CommonResponse
 
     @Multipart

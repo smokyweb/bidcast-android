@@ -619,8 +619,9 @@ class DashRepository @Inject constructor(private val api: ApiInterface) : BaseRe
 
     suspend fun promoteShow(
         scheduleShowId: RequestBody,
-        promoteShowId: RequestBody
-    ) = call { api.promoteShow(scheduleShowId, promoteShowId) }
+        promoteShowId: RequestBody,
+        customerPaymentProfileId: RequestBody?
+    ) = call { api.promoteShow(scheduleShowId, promoteShowId, customerPaymentProfileId) }
 
     suspend fun sendTipAmount(
         sellerId: RequestBody,

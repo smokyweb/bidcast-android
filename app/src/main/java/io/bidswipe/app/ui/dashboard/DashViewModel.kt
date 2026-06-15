@@ -742,12 +742,13 @@ class DashViewModel @Inject constructor(
     fun promoteShow(
         scheduleShowId: RequestBody,
         promoteShowId: RequestBody,
+        customerPaymentProfileId: RequestBody?,
     ) = viewModelScope.launch {
         if (!networkMonitor.hasInternet()) {
             _promoteShowResponse.value = NO_INTERNET_ERROR
             return@launch
         }
-        _promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId)
+        _promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId, customerPaymentProfileId)
     }
 
     private var _getLiveSellerResponse = MutableLiveData<Resource<GetLiveSellerResponse>>()

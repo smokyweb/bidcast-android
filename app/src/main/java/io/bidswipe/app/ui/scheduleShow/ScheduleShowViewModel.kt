@@ -338,12 +338,13 @@ class ScheduleShowViewModel @Inject constructor(
 	fun promoteShow(
 		scheduleShowId: RequestBody,
 		promoteShowId: RequestBody,
+		customerPaymentProfileId: RequestBody?,
 	) = viewModelScope.launch {
 		if (!networkMonitor.hasInternet()) {
 			_promoteShowResponse.value = NO_INTERNET_ERROR
 			return@launch
 		}
-		_promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId)
+		_promoteShowResponse.value = repo.promoteShow(scheduleShowId, promoteShowId, customerPaymentProfileId)
 	}
 
 	// Basecamp #9940152629 (2026-05-29): per-show tip settings for TipSettingActivity.

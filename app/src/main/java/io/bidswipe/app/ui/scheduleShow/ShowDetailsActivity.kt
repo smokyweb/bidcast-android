@@ -481,12 +481,9 @@ class ShowDetailsActivity : BaseActivity() {
         promoteSheetBind.optionList.adapter =
             PromoteSheetAdapter(promotePlans, object : RecyclerClicks {
                 override fun itemClick(pos: Int, status: String?) {
+                    val plan = promotePlans.getOrNull(pos) ?: return
                     promoteSheet.dismiss()
-                    bind.loader.isVisible = true
-                    viewModel.promoteShow(
-                        viewModel.showId.toString().request(),
-                        promotePlans[pos]?.id.toString().request()
-                    )
+                    confirmPromotePurchase(plan)
                 }
             })
 
@@ -495,6 +492,82 @@ class ShowDetailsActivity : BaseActivity() {
         }
 
         promoteSheet.show()
+    }
+
+    private fun confirmPromotePurchase(plan: GetPromotePlansResponse.Data) {
+        val defaultCard = App.profileResponse.value?.defaultCard
+        if (App.profileResponse.value?.hasCardAdded != true || defaultCard?.cardId.isNullOrBlank()) {
+            AppBottomSheet(
+                this,
+                R.drawable.ic_warning,
+                "Payment Method Required",
+                "Add a payment card before purchasing a show promotion.",
+                primaryBtnText = "Okay",
+                secondaryBtnText = "Cancel",
+                canCancel = true,
+                showSecondary = false,
+                iconPadding = 16,
+                alertType = AlertType.WARNING,
+                clicks = object : AlertClicks {
+                    override fun primaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+
+                    override fun secondaryClick(dialog: AppBottomSheet) {
+                        dialog.dismiss()
+                    }
+                }
+            ).show()
+            return
+        }
+
+        val message = buildString {
+            append("Plan: ")
+            append(plan.title ?: "Show Promotion")
+            plan.subTitle?.takeIf { it.isNotBlank() }?.let {
+                append("\n")
+                append(it)
+            }
+            append("\n\nShow: ")
+            append(showData?.title?.takeIf { it.isNotBlank() } ?: "Current Show")
+            append("\n\nPayment method:\n")
+            append("•••• •••• •••• ")
+            append(defaultCard?.last4.orEmpty().ifEmpty { "----" })
+            append("\nExpires ")
+            append(defaultCard?.expMonth ?: "--")
+            append("/")
+            append(defaultCard?.expYear ?: "--")
+            append("\n\nTotal: ")
+            append(plan.price.asMoney())
+        }
+
+        AppBottomSheet(
+            this,
+            R.drawable.ic_payment_card,
+            "Confirm Purchase",
+            message,
+            primaryBtnText = "Confirm Purchase",
+            secondaryBtnText = "Cancel",
+            canCancel = true,
+            showSecondary = true,
+            iconPadding = 16,
+            alertType = AlertType.INFO,
+            clicks = object : AlertClicks {
+                override fun primaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                    bind.loader.isVisible = true
+                    viewModel.promoteShow(
+                        viewModel.showId.toString().request(),
+                        plan.id.toString().request(),
+                        defaultCard?.cardId.orEmpty().request()
+                    )
+                }
+
+                override fun secondaryClick(dialog: AppBottomSheet) {
+                    dialog.dismiss()
+                }
+            }
+        ).show()
     }
 
     fun showPaymentAndAddressSheet() {

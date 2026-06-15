@@ -2816,7 +2816,8 @@ class AgoraPublisherActivity : BaseActivity() {
         pendingPromoteShowId = promoteShowId
         viewModel.promoteShow(
             showId.request(),
-            promoteShowId.request()
+            promoteShowId.request(),
+            App.profileResponse.value?.defaultCard?.cardId.orEmpty().request()
         )
     }
 
