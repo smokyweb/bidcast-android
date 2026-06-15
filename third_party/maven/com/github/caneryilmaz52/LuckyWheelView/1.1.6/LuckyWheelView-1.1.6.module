@@ -1,0 +1,129 @@
+{
+  "formatVersion" : "1.1",
+  "component" : {
+    "group" : "com.github.caneryilmaz52",
+    "module" : "LuckyWheelView",
+    "version" : "1.1.6",
+    "attributes" : {
+      "org.gradle.status" : "release"
+    }
+  },
+  "createdBy" : {
+    "gradle" : {
+      "version" : "8.6"
+    }
+  },
+  "variants" : [ {
+    "name" : "releaseVariantReleaseApiPublication",
+    "attributes" : {
+      "org.gradle.category" : "library",
+      "org.gradle.dependency.bundling" : "external",
+      "org.gradle.libraryelements" : "aar",
+      "org.gradle.usage" : "java-api"
+    },
+    "dependencies" : [ {
+      "group" : "org.jetbrains.kotlin",
+      "module" : "kotlin-stdlib-jdk8",
+      "version" : {
+        "requires" : "1.9.0"
+      }
+    } ],
+    "files" : [ {
+      "name" : "LuckyWheelView-1.1.6.aar",
+      "url" : "LuckyWheelView-1.1.6.aar",
+      "size" : 56303,
+      "sha512" : "072240bb55c1ab81684639ddef531ad52e5420d5801dde1582c4b1699272233badaa85876b9a8ee0b61e80532fc517a9eea097ed0f5d0925122a222906ef3d7f",
+      "sha256" : "33a1b1cc37442ac064bcacd70d492664d4de3594d04144f94e71db4b85e12dc7",
+      "sha1" : "0e9929df8c58031f084f8a3ea91bbcc3322f8615",
+      "md5" : "a0ed80423acb1e069a26d2600864c103"
+    } ]
+  }, {
+    "name" : "releaseVariantReleaseRuntimePublication",
+    "attributes" : {
+      "org.gradle.category" : "library",
+      "org.gradle.dependency.bundling" : "external",
+      "org.gradle.libraryelements" : "aar",
+      "org.gradle.usage" : "java-runtime"
+    },
+    "dependencies" : [ {
+      "group" : "androidx.core",
+      "module" : "core-ktx",
+      "version" : {
+        "requires" : "1.13.1"
+      }
+    }, {
+      "group" : "androidx.appcompat",
+      "module" : "appcompat",
+      "version" : {
+        "requires" : "1.7.0"
+      }
+    }, {
+      "group" : "com.google.android.material",
+      "module" : "material",
+      "version" : {
+        "requires" : "1.12.0"
+      }
+    }, {
+      "group" : "io.coil-kt.coil3",
+      "module" : "coil",
+      "version" : {
+        "requires" : "3.0.4"
+      }
+    }, {
+      "group" : "io.coil-kt.coil3",
+      "module" : "coil-network-okhttp",
+      "version" : {
+        "requires" : "3.0.4"
+      }
+    }, {
+      "group" : "org.jetbrains.kotlin",
+      "module" : "kotlin-stdlib-jdk8",
+      "version" : {
+        "requires" : "1.9.0"
+      }
+    } ],
+    "files" : [ {
+      "name" : "LuckyWheelView-1.1.6.aar",
+      "url" : "LuckyWheelView-1.1.6.aar",
+      "size" : 56303,
+      "sha512" : "072240bb55c1ab81684639ddef531ad52e5420d5801dde1582c4b1699272233badaa85876b9a8ee0b61e80532fc517a9eea097ed0f5d0925122a222906ef3d7f",
+      "sha256" : "33a1b1cc37442ac064bcacd70d492664d4de3594d04144f94e71db4b85e12dc7",
+      "sha1" : "0e9929df8c58031f084f8a3ea91bbcc3322f8615",
+      "md5" : "a0ed80423acb1e069a26d2600864c103"
+    } ]
+  }, {
+    "name" : "releaseVariantReleaseSourcePublication",
+    "attributes" : {
+      "org.gradle.category" : "documentation",
+      "org.gradle.dependency.bundling" : "external",
+      "org.gradle.docstype" : "sources",
+      "org.gradle.usage" : "java-runtime"
+    },
+    "files" : [ {
+      "name" : "LuckyWheelView-1.1.6.jar",
+      "url" : "LuckyWheelView-1.1.6.jar",
+      "size" : 18705,
+      "sha512" : "6ad1d753f5ed295b4a1f9fb637cafc8e293c5782471de39f46e2e1178e8cb945729a9d89d5f7837665f69294ed2d19779114a043bfab7a60272c98f1bca0ee25",
+      "sha256" : "0001bda63064f72c23d3ca39ee0552a97bb8559c359ead7d4a65d05b03cb7839",
+      "sha1" : "3ced3af6185f6cccc59ff8457c23d0dd710d1a39",
+      "md5" : "a6825687a55db5dbf1bb1a2d93705a4c"
+    } ]
+  }, {
+    "name" : "releaseVariantReleaseJavaDocPublication",
+    "attributes" : {
+      "org.gradle.category" : "documentation",
+      "org.gradle.dependency.bundling" : "external",
+      "org.gradle.docstype" : "javadoc",
+      "org.gradle.usage" : "java-runtime"
+    },
+    "files" : [ {
+      "name" : "LuckyWheelView-1.1.6.jar",
+      "url" : "LuckyWheelView-1.1.6.jar",
+      "size" : 363992,
+      "sha512" : "6e2d1d2cd495c2d758a5a754c7bf1759a083dff07b08ddd78f713d169265f294c071e2ea54622c2e469a89aeb069bd8397fda41e6aec0d5094958179e4eca074",
+      "sha256" : "6e1edd443380d0103ab2b6540ae9888a73d4dc979bb5717b402961bd95345b03",
+      "sha1" : "f779456cbd8e7b51288c3573c71a94f63a1a351e",
+      "md5" : "8ed35bb47e51b4578d61603e8e44e7db"
+    } ]
+  } ]
+}

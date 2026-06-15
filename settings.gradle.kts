@@ -20,6 +20,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("third_party/maven")
         maven("https://jitpack.io")
         maven  ("https://a8c-libs.s3.amazonaws.com/android")
     }

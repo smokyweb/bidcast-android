@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- do_not_remove: published-with-gradle-metadata -->
+<modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.caneryilmaz52</groupId>
+  <artifactId>LuckyWheelView</artifactId>
+  <version>1.1.6</version>
+  <packaging>aar</packaging>
+  <name>Lucky Wheel View</name>
+  <description>A custom lightweight component that displays a Lucky Wheel developed with Kotlin. Features easy customize of colors , text, icon, arrow, animation, rotation and addition of items and it's very easy to integrate in your application.</description>
+  <url>https://github.com/caneryilmaz52/LuckyWheelView</url>
+  <inceptionYear>2024</inceptionYear>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>caneryilmaz52</id>
+      <name>Caner YILMAZ</name>
+      <email>caneryilmaz.apps@gmail.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:github.com/caneryilmaz52/LuckyWheelView.git</connection>
+    <developerConnection>scm:git:ssh://github.com/caneryilmaz52/LuckyWheelView.git</developerConnection>
+    <url>https://github.com/caneryilmaz52/LuckyWheelView</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>1.9.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>androidx.core</groupId>
+      <artifactId>core-ktx</artifactId>
+      <version>1.13.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>androidx.appcompat</groupId>
+      <artifactId>appcompat</artifactId>
+      <version>1.7.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.android.material</groupId>
+      <artifactId>material</artifactId>
+      <version>1.12.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.coil-kt.coil3</groupId>
+      <artifactId>coil</artifactId>
+      <version>3.0.4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.coil-kt.coil3</groupId>
+      <artifactId>coil-network-okhttp</artifactId>
+      <version>3.0.4</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+</project>
