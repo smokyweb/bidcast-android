@@ -568,6 +568,10 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                 // updated to targetRoomId by onRaid() at that point).
                 runSafe {
                     requireActivity().runOnUiThread {
+                        if (json.optBoolean("raid", false)) {
+                            android.util.Log.d("RAID_QA", "onRoomEnded: ignoring raid source-room close ${json.optString("room_end")}")
+                            return@runOnUiThread
+                        }
                         if (json.optString("room_end") == roomID) {
                             liveEndedSheet?.dismiss()
                             liveEndedSheet = null
@@ -2538,7 +2542,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
 
                 // Update room state BEFORE re-joining socket/Agora.
                 roomID = targetRoomId
-                streamID = ""          // will be filled by getShowDetails REST result
+                streamID = rtcToken.takeIf { it.isNotBlank() } ?: ""
                 liveShowData = null    // clear so the getShowDetailsRepo observer fires fresh
 
                 socketManager?.joinRoom(roomID, userId) {
@@ -2550,6 +2554,14 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                         userName,
                         userImage
                     )
+                }
+
+                if (streamID.isNotBlank()) {
+                    android.util.Log.d("RAID_QA", "BUYER RAID: joining Agora immediately with payload token")
+                    App.manager.joinSubscriberChannel(streamID, roomID)
+                    currentRemoteUid?.let { uid ->
+                        setupRemoteVideo(uid)
+                    }
                 }
 
                 // Parse showId from roomId (format: live_room_{userId}_{showId})
