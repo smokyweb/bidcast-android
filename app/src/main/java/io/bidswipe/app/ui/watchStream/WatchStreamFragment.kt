@@ -659,7 +659,7 @@ class WatchStreamFragment : BaseFragment<StreamViewModel, FragmentWatchStreamBin
                             val message = obj.optString("message")
                             Alerts.success(mCtx, message)
                             val targetRoomId = obj.optString("target_room_id")
-                            val rtcToken = obj.optString("rtcToken")
+                            val rtcToken = obj.optString("rtcToken").ifBlank { obj.optString("rtc_token") }
                             onRaid(targetRoomId, rtcToken)
                         }
                     }

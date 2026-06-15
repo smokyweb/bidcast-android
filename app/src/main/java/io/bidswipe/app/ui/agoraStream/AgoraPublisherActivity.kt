@@ -1337,6 +1337,10 @@ class AgoraPublisherActivity : BaseActivity() {
         socketManager?.onRoomEnded { args ->
             val endedRoomId = args.optString("room_end")
             if (endedRoomId != roomID) return@onRoomEnded
+            if (args.optBoolean("raid", false)) {
+                android.util.Log.d("RAID_QA", "SELLER onRoomEnded: ignoring raid source-room close $endedRoomId")
+                return@onRoomEnded
+            }
             runOnUiThread {
                 App.manager.destroyEngine()
                 if (!isFinishing && !isDestroyed) {

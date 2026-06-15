@@ -40,6 +40,8 @@ data class GetShowDetailsResponse(
         val isVerifiedOnly: Boolean?,
         @SerializedName("is_live")
         val isLive: Boolean?,
+        @SerializedName("is_promoted")
+        val isPromoted: Any?,
         @SerializedName("is_promote")
         val isPromote: String?,
         @SerializedName("is_repeat")

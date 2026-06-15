@@ -17,6 +17,7 @@ import io.bidswipe.app.databinding.FragmentPrepareYourShowBinding
 import io.bidswipe.app.interfaces.AlertClicks
 import io.bidswipe.app.interfaces.RecyclerClicks
 import io.bidswipe.app.network.Resource
+import io.bidswipe.app.network.response.GetShowDetailsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
 import io.bidswipe.app.ui.dashboard.DashViewModel
 import io.bidswipe.app.ui.scheduleShow.ShowDetailsActivity
@@ -40,6 +41,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 	) = FragmentPrepareYourShowBinding.inflate(inflater, view, false)
 
 	var imagePartList = mutableListOf<MultipartBody.Part?>()
+	private var pendingContextShow: GetShowDetailsResponse.Data? = null
 
 	private var scheduleShowLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 			if (result.resultCode == Activity.RESULT_OK) {
@@ -76,6 +78,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 	// means pressing the system back button silently discards progress in training mode but must
 	// advance the step when a show context is already present.
 	private var rehearsalContextLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+			markRehearsedForCurrentShow()
 			viewModel.currentStep = 3
 			viewModel.showList.getOrNull(2)?.status = "completed"
 			viewModel.showList.getOrNull(3)?.status = "locked"
@@ -83,13 +86,15 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 		}
 
 	// Basecamp #9986427172: launcher for ShowDetailsActivity in promote mode (step 4, show-context).
-	// On return — regardless of result — mark step 4 complete and advance to step 5.
-	private var promoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+	// Mark step 4 complete only after ShowDetailsActivity reports a successful promotion.
+	private var promoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+		if (result.resultCode == Activity.RESULT_OK) {
 			viewModel.currentStep = 4
 			viewModel.showList.getOrNull(3)?.status = "completed"
 			viewModel.showList.getOrNull(4)?.status = "locked"
 			bind.recycler.adapter?.notifyDataSetChanged()
 		}
+	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -247,6 +252,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					bind.stepProgress.max = viewModel.showList.size
 					bind.stepProgress.progress = 1
 
+					applyShowContextIfReady()
 					adapter.notifyDataSetChanged()
 
 				}
@@ -368,6 +374,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 					viewModel.getShowDetailsRepo.value = null
 					bind.loader.isVisible = false
 					val show = res.value.data ?: return@observe
+					pendingContextShow = show
 
 					// Show title (visible when show context is active).
 					val title = show.title?.takeIf { it.isNotBlank() }
@@ -376,30 +383,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 						bind.showContextTitle.isVisible = true
 					}
 
-					// Step 0 (Schedule): complete when the show has both date and time.
-					val hasSchedule = !show.date.isNullOrBlank() && !show.time.isNullOrBlank()
-
-					// Step 1 (Add Products): complete when the show has >=1 product_id.
-					// product_ids is List<String?> per GetShowDetailsResponse.Data.
-					val hasProducts = (show.productIds?.filterNotNull()?.size ?: 0) >= 1
-
-					// Derive completed-step count (steps 0 and 1 only — mirrors PWA).
-					val derivedComplete = when {
-						hasSchedule && hasProducts -> 2
-						hasSchedule -> 1
-						else -> 0
-					}
-
-					if (derivedComplete > 0 && viewModel.showList.isNotEmpty()) {
-						for (i in 0 until derivedComplete.coerceAtMost(viewModel.showList.size)) {
-							viewModel.showList[i]?.status = "completed"
-						}
-						if (derivedComplete < viewModel.showList.size) {
-							viewModel.showList[derivedComplete]?.status = "locked"
-						}
-						bind.stepProgress.progress = derivedComplete + 1
-						bind.recycler.adapter?.notifyDataSetChanged()
-					}
+					applyShowContextIfReady()
 				}
 				is Resource.Error -> {
 					viewModel.getShowDetailsRepo.value = null
@@ -419,4 +403,47 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 		}
 	}
 
+	private fun markRehearsedForCurrentShow() {
+		val sid = viewModel.showId.takeIf { it.isNotBlank() } ?: return
+		mCtx.getSharedPreferences("bidcast_prepare", android.content.Context.MODE_PRIVATE)
+			.edit()
+			.putBoolean("rehearsed_$sid", true)
+			.apply()
 }
+
+	private fun hasRehearsedCurrentShow(): Boolean {
+		val sid = viewModel.showId.takeIf { it.isNotBlank() } ?: return false
+		return mCtx.getSharedPreferences("bidcast_prepare", android.content.Context.MODE_PRIVATE)
+			.getBoolean("rehearsed_$sid", false)
+	}
+
+	private fun applyShowContextIfReady() {
+		val show = pendingContextShow ?: return
+		if (viewModel.showId.isBlank() || viewModel.showList.isEmpty()) return
+
+		val hasSchedule = !show.date.isNullOrBlank() && !show.time.isNullOrBlank()
+		val hasProducts = (show.productIds?.filterNotNull()?.size ?: 0) >= 1
+		val hasRehearsed = hasRehearsedCurrentShow()
+		val isPromoted = when (val raw = show.isPromoted) {
+			is Boolean -> raw
+			is Number -> raw.toInt() != 0
+			is String -> raw.equals("true", true) || raw == "1"
+			else -> show.promoteShowId != null
+		}
+		val isLive = show.isLive == true
+		val flags = listOf(hasSchedule, hasProducts, hasRehearsed, isPromoted, isLive)
+		val derivedComplete = flags.takeWhile { it }.size.coerceAtMost(viewModel.showList.size)
+
+		viewModel.showList.forEachIndexed { index, model ->
+			model?.status = when {
+				index < derivedComplete -> "completed"
+				index == derivedComplete -> "locked"
+				else -> "locked"
+			}
+		}
+		viewModel.currentStep = derivedComplete
+		bind.stepProgress.progress = (derivedComplete + 1).coerceAtMost(viewModel.showList.size)
+		bind.recycler.adapter?.notifyDataSetChanged()
+	}
+
+	}

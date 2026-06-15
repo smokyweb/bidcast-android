@@ -163,6 +163,10 @@ class ShowDetailsActivity : BaseActivity() {
                         clicks = object : AlertClicks {
                             override fun primaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
+                                if (autoPromote) {
+                                    setResult(Activity.RESULT_OK)
+                                    finishAfterTransition()
+                                }
                             }
                             override fun secondaryClick(dialog: AppBottomSheet) {
                                 dialog.dismiss()
