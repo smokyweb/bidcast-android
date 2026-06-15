@@ -1,0 +1,172 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.wordpress",
+    "module": "aztec",
+    "version": "v2.1.5",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.8"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.24"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "aztec-v2.1.5.aar",
+          "url": "aztec-v2.1.5.aar",
+          "size": 799761,
+          "sha512": "3648a059acd210485810a4c2e8832a2af9aceb434b809de0e26dc656a706aa6fbe7818ae3870c98b11eab04e551c0116a2375691716563e00e61dbb1105e71ab",
+          "sha256": "17c95948d059c90cbac396dd4958c32ebe805942aaf49c374a76ceb556449178",
+          "sha1": "41f0e96be50d3c5248657c59ff9b0edf907eff9e",
+          "md5": "e7f1f2831f815807c284e12480b6c369"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.ccil.cowan.tagsoup",
+          "module": "tagsoup",
+          "version": {
+            "requires": "1.2.1"
+          }
+        },
+        {
+          "group": "org.jsoup",
+          "module": "jsoup",
+          "version": {
+            "requires": "1.15.3"
+          }
+        },
+        {
+          "group": "androidx.collection",
+          "module": "collection",
+          "version": {
+            "requires": "1.1.0"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "org.wordpress",
+          "module": "utils",
+          "version": {
+            "requires": "3.5.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.8.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-android",
+          "version": {
+            "requires": "1.8.1"
+          }
+        },
+        {
+          "group": "org.apache.commons",
+          "module": "commons-lang3",
+          "version": {
+            "requires": "3.8.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.24"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "aztec-v2.1.5.aar",
+          "url": "aztec-v2.1.5.aar",
+          "size": 799761,
+          "sha512": "3648a059acd210485810a4c2e8832a2af9aceb434b809de0e26dc656a706aa6fbe7818ae3870c98b11eab04e551c0116a2375691716563e00e61dbb1105e71ab",
+          "sha256": "17c95948d059c90cbac396dd4958c32ebe805942aaf49c374a76ceb556449178",
+          "sha1": "41f0e96be50d3c5248657c59ff9b0edf907eff9e",
+          "md5": "e7f1f2831f815807c284e12480b6c369"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "aztec-v2.1.5-sources.jar",
+          "url": "aztec-v2.1.5-sources.jar",
+          "size": 210127,
+          "sha512": "958e68bfb3f644f252fbc2f943b4602d4ed6f99644271948f8e9ffdfd29fd5479bb1d4cab1c5eb5792fa2fecdda7c6bd84c9368a00c411cd59cda373d94d6896",
+          "sha256": "6ef66f6b6786b0e2eb70931653ffff1a83d9d9ccf4825d00c9e789d0355f5e43",
+          "sha1": "d54ab611682e096accfc1f1868e819f440ab899b",
+          "md5": "57916969550beb6c06d708aa0ec196b1"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseJavaDocPublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "aztec-v2.1.5-javadoc.jar",
+          "url": "aztec-v2.1.5-javadoc.jar",
+          "size": 1504477,
+          "sha512": "946aa621ac5ef22539e3bf11af1f48433f39eca87f851b4283ee98d5c4c11bc608cb9b597bd530ea0500551545ffc3b2e468ae72b3264e762006248d0f1dd8d0",
+          "sha256": "816b9af58d2b680a4cbd686c218958e812be7fa5cf5ab69f4bd94b14d268cb65",
+          "sha1": "3ff95e3fa5ff03c8ee37a2232ce93c25d031fa8f",
+          "md5": "48b445d27aa15a7039f8e01b40f9056e"
+        }
+      ]
+    }
+  ]
+}
