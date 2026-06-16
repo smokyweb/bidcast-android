@@ -20,6 +20,12 @@ class ShowAdapter(
 
 	override fun bindView(inflater: LayoutInflater, parent: ViewGroup) = ShowItemBinding.inflate(inflater, parent, false)
 
+	private fun completedActionText(position: Int): String = when (position) {
+		2 -> "Rehearse Again"
+		3 -> "Change Promotion"
+		else -> "Change"
+	}
+
 	override fun onBind(holder: BaseViewHolder<ShowItemBinding>, position: Int, item: GetPrepareStepResponse.Data?) {
 		with(holder) {
 			val isStepEnabled = position == 0 || (0 until position).all { index ->
@@ -53,7 +59,9 @@ class ShowAdapter(
 				"completed" -> {
 					bind.icon.isVisible = true
 					bind.step.isVisible = false
-					bind.setSchedule.visibility = View.GONE
+					bind.setSchedule.visibility = View.VISIBLE
+					bind.setSchedule.text = completedActionText(position)
+					bind.setSchedule.isEnabled = true
 					bind.icon.setImageDrawable(ContextCompat.getDrawable(mCtx, R.drawable.ic_tick))
 					// Basecamp #9986418936: match iOS defaultTheme (#0058BD) for completed circle — iOS uses blue, not green
 					bind.iconCard.setCardBackgroundColor(ContextCompat.getColor(mCtx, R.color.primary))
