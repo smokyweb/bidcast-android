@@ -89,6 +89,7 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 	// Mark step 4 complete only after ShowDetailsActivity reports a successful promotion.
 	private var promoteLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 		if (result.resultCode == Activity.RESULT_OK) {
+			markBringInBuyersCompleteForCurrentShow()
 			viewModel.currentStep = 4
 			viewModel.showList.getOrNull(3)?.status = "completed"
 			viewModel.showList.getOrNull(4)?.status = "locked"
@@ -417,6 +418,20 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			.getBoolean("rehearsed_$sid", false)
 	}
 
+	private fun markBringInBuyersCompleteForCurrentShow() {
+		val sid = viewModel.showId.takeIf { it.isNotBlank() } ?: return
+		mCtx.getSharedPreferences("bidcast_prepare", android.content.Context.MODE_PRIVATE)
+			.edit()
+			.putBoolean("bring_in_buyers_$sid", true)
+			.apply()
+	}
+
+	private fun hasBringInBuyersCompleteForCurrentShow(): Boolean {
+		val sid = viewModel.showId.takeIf { it.isNotBlank() } ?: return false
+		return mCtx.getSharedPreferences("bidcast_prepare", android.content.Context.MODE_PRIVATE)
+			.getBoolean("bring_in_buyers_$sid", false)
+	}
+
 	private fun applyShowContextIfReady() {
 		val show = pendingContextShow ?: return
 		if (viewModel.showId.isBlank() || viewModel.showList.isEmpty()) return
@@ -430,8 +445,9 @@ class PrepareYourShowFragment : BaseFragment<DashViewModel, FragmentPrepareYourS
 			is String -> raw.equals("true", true) || raw == "1"
 			else -> show.promoteShowId != null
 		}
+		val hasBringInBuyers = isPromoted || hasBringInBuyersCompleteForCurrentShow()
 		val isLive = show.isLive == true
-		val flags = listOf(hasSchedule, hasProducts, hasRehearsed, isPromoted, isLive)
+		val flags = listOf(hasSchedule, hasProducts, hasRehearsed, hasBringInBuyers, isLive)
 		val derivedComplete = flags.takeWhile { it }.size.coerceAtMost(viewModel.showList.size)
 
 		viewModel.showList.forEachIndexed { index, model ->

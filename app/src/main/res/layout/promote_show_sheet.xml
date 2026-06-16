@@ -65,6 +65,20 @@
             android:gravity="center_horizontal"
             android:text="@string/prices_shown_in_usd_actual_boost_duration_may_vary" />
 
+        <TextView
+            android:id="@+id/skipPromoteBtn"
+            style="@style/BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/card_16"
+            android:backgroundTint="@color/surfaceVariant"
+            android:gravity="center"
+            android:text="I don't want to promote my show"
+            android:textColor="@color/onSurface"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

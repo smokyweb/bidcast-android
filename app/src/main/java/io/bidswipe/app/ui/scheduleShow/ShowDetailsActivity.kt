@@ -65,6 +65,7 @@ class ShowDetailsActivity : BaseActivity() {
 
     private var showData: GetShowDetailsResponse.Data?? = null
     private var promotePlans = mutableListOf<GetPromotePlansResponse.Data?>()
+    private var launchedForAutoPromote = false
 
     private var editShowLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -123,6 +124,7 @@ class ShowDetailsActivity : BaseActivity() {
         // Basecamp #9986427172: if launched with autoPromote=true (from PrepareYourShowFragment
         // step 4 in show-context mode) open the promote sheet automatically once plans load.
         val autoPromote = intent.getBooleanExtra("autoPromote", false)
+        launchedForAutoPromote = autoPromote
         viewModel.getPromoteShowList()
         viewModel.getPromoteShowListRepo.observe(this) {
             when (it) {
@@ -130,7 +132,7 @@ class ShowDetailsActivity : BaseActivity() {
                     viewModel.getPromoteShowListRepo.value = null
                     promotePlans.clear()
                     promotePlans.addAll(it.value.data ?: mutableListOf())
-                    if (autoPromote && promotePlans.isNotEmpty()) {
+                    if (autoPromote) {
                         showPromoteSheet()
                     }
                 }
@@ -493,6 +495,13 @@ class ShowDetailsActivity : BaseActivity() {
 
         promoteSheetBind.close.setHapticClickListener {
             promoteSheet.dismiss()
+        }
+
+        promoteSheetBind.skipPromoteBtn.isVisible = launchedForAutoPromote
+        promoteSheetBind.skipPromoteBtn.setHapticClickListener {
+            promoteSheet.dismiss()
+            setResult(Activity.RESULT_OK, Intent().putExtra("skippedPromote", true))
+            finishAfterTransition()
         }
 
         promoteSheet.show()
