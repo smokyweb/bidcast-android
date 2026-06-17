@@ -1,10 +1,13 @@
 package io.bidswipe.app.ui.scheduleShow
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -18,6 +21,7 @@ import io.bidswipe.app.model.LiveShowModel
 import io.bidswipe.app.network.Resource
 import io.bidswipe.app.network.response.GetAllTipsResponse
 import io.bidswipe.app.ui.custom.AppBottomSheet
+import io.bidswipe.app.ui.randomizer.RandomizerTemplatesActivity
 import io.bidswipe.app.utils.Alerts
 import io.bidswipe.app.utils.Utils
 import io.bidswipe.app.utils.asCapital
@@ -41,6 +45,19 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
 
     private var titleList = mutableListOf<GetAllTipsResponse.Data.Tip?>()
     private var exampleList = mutableListOf<String?>()
+    private val randomizerTemplateLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val data = result.data ?: return@registerForActivityResult
+        val templateId = data.getIntExtra("selectedTemplateId", 0).takeIf { it > 0 }
+        val templateName = data.getStringExtra("selectedTemplateName")
+        viewModel.selectedRandomizerTemplateId = templateId
+        viewModel.selectedRandomizerTemplateName = templateName
+        if (!templateName.isNullOrBlank()) {
+            bind.actvRandomizerTemplate.setText(templateName, false)
+        }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -251,7 +268,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
         vm2.listResponse.observe(viewLifecycleOwner) { res ->
             if (res is io.bidswipe.app.network.Resource.Success) {
                 val templates = res.value?.data ?: return@observe
-                val labels = mutableListOf("None")
+                val labels = mutableListOf("None", "Create new randomizer template")
                 labels.addAll(templates.map { "${it.name} (${it.typeLabel()})" })
                 val adapter = android.widget.ArrayAdapter(
                     mCtx,
@@ -263,7 +280,7 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                 val prevId = viewModel.selectedRandomizerTemplateId
                 if (prevId != null) {
                     val idx = templates.indexOfFirst { it.id == prevId }
-                    if (idx >= 0) bind.actvRandomizerTemplate.setText(labels[idx + 1], false)
+                    if (idx >= 0) bind.actvRandomizerTemplate.setText(labels[idx + 2], false)
                 } else {
                     bind.actvRandomizerTemplate.setText("None", false)
                 }
@@ -271,8 +288,18 @@ class ShowTitleFragment : BaseFragment<ScheduleShowViewModel, FragmentShowTitleB
                     if (position == 0) {
                         viewModel.selectedRandomizerTemplateId = null
                         viewModel.selectedRandomizerTemplateName = null
+                    } else if (position == 1) {
+                        bind.actvRandomizerTemplate.setText(
+                            viewModel.selectedRandomizerTemplateName ?: "None",
+                            false
+                        )
+                        randomizerTemplateLauncher.launch(
+                            Intent(requireContext(), RandomizerTemplatesActivity::class.java)
+                                .putExtra("from", "show_creation_picker")
+                                .putExtra("start_new_template", true)
+                        )
                     } else {
-                        val tpl = templates[position - 1]
+                        val tpl = templates[position - 2]
                         viewModel.selectedRandomizerTemplateId = tpl.id
                         viewModel.selectedRandomizerTemplateName = tpl.name
                     }
